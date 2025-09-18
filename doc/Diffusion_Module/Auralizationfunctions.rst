@@ -1,9 +1,9 @@
-FVM functions
-=============
+Auralization functions
+======================
 
 Main function
 -------------
-.. automodule:: Diffusion_Module.FiniteVolumeMethod.FVMcall
+.. automodule:: Diffusion_Module.Auralization.Auralization
     :members:
     :undoc-members:
     :show-inheritance:
@@ -11,7 +11,7 @@ Main function
 
 Internal functions
 ------------------
-.. automodule:: Diffusion_Module.FiniteVolumeMethod.FVMfunctions
+.. automodule:: Diffusion_Module.Auralization.Auralizationfunctions
     :members:
     :undoc-members:
     :show-inheritance:
