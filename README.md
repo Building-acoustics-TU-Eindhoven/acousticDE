@@ -32,7 +32,7 @@ This research is founded by the Dutch Research Council (<u>[NWO](https://www.nwo
 Diffusion is under copyright of Building Acoustics Group at the Eindhoven University of Technology and is licensed under GNU General Public License v2.0. See LICENSE.md for more details.
 
 ## References
-J. M. Navarro, J. Escolano and J. J. Lopez, Implementation and evaluation of a diffusion equation model based on finite difference schemes for sound field prediction in rooms, Applied Acoustics 73 (2012) 659-665.
+J. M. Navarro, J. Escolano and J. J. Lopez, Implementation and evaluation of a diffusion equation model based on finite difference schemes for sound field prediction in rooms, Applied Acoustics 73 (2012).
 
-R. P. Mu{\~{n}}oz, Numerical modeling for urban sound propagation: developments in wave-based and energy based methods, PhD Thesis, Technische Universiteit Eindhoven, 2019.
+R. P. Muñoz, Numerical modeling for urban sound propagation: developments in wave-based and energy based methods, PhD Thesis, Technische Universiteit Eindhoven, 2019.
 

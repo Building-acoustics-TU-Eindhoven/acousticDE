@@ -53,7 +53,7 @@ The boundary condition above can be discretised for every face of a control volu
 ```{math}
 - D \frac{\partial}{\partial n}  w_j(\mathbf{r}, t) = - h_{j,k}  w_j
 ```
-The term $n$ indicates the vector normal to the surface and the term $h_{(b)j,k}$ is dependent on the absorption coefficient $\alpha$ of the surface are of the $j$th control volume.
+The term $n$ indicates the vector normal to the surface and the term $h_{j,k}$ is a an exchange factor (Sabine, Eyring or Modified factor) dependent on the absorption coefficient $\alpha$ of the surface are of the $j$th control volume and on the speed of sound $c$. 
 
 ### Discretization
 The full discretised partial differential diffusion equation is:
