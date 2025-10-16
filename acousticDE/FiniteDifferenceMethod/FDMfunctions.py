@@ -59,7 +59,7 @@ def room_charact(length,width,height):
     Parameters
     ----------
     length : float
-        length of the room in meters.
+        Length of the room in meters.
     width : float
         Width of the room in meters.
     height : float
@@ -100,7 +100,7 @@ def create_mesh(length, width, height, dx, dy, dz):
     Parameters
     ----------
     length : float
-        length of the room in meters.
+        Length of the room in meters.
     width : float
         Width of the room in meters.
     height : float
@@ -153,7 +153,7 @@ def abs_term(th,alpha,c0):
         th : int
             The options for the absorption term; Sabine (th=1), Eyring (th=2) and modified by Xiang (th=3)
         alpha : list
-            Absrption coefficient for each frequency
+            Absorption coefficient for each frequency
         c0 : int 
             Speed of sound 
 
@@ -187,17 +187,17 @@ def equiv_absorp(alpha_1, alpha_2, alpha_3, alpha_4, alpha_5, alpha_6, S1, S2, S
     Parameters
     ----------
         alpha_1 : list
-            Absrption coefficient for each frequency of Surface 1
+            Absorption coefficient for each frequency of Surface 1
         alpha_2 : list
-            Absrption coefficient for each frequency of Surface 2
+            Absorption coefficient for each frequency of Surface 2
         alpha_3 : list
-            Absrption coefficient for each frequency of Surface 3
+            Absorption coefficient for each frequency of Surface 3
         alpha_4 : list
-            Absrption coefficient for each frequency of Surface 4
+            Absorption coefficient for each frequency of Surface 4
         alpha_5 : list
-            Absrption coefficient for each frequency of Surface 5
+            Absorption coefficient for each frequency of Surface 5
         alpha_6 : list
-            Absrption coefficient for each frequency of Surface 6
+            Absorption coefficient for each frequency of Surface 6
         S1 : float
             Surface area of the Surface 1 (floor).
         S2 : float
