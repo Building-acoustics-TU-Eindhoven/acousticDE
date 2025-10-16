@@ -19,7 +19,7 @@ results = run_fvm_sim('C:\....\cube.msh', 'C:\....\cube_input_fvm.json', 'C:\...
 
 The software should provide results of Sound Pressure Levels at the receiver position, Reverberation time, Clarity and other energetic parameters in a pickle file called _resultsFVM.pkl_.
 
-If using the following input data and absorption coefficientsin the .csv file:
+If using the following input data,
 
 ```
 input_data = {
@@ -35,11 +35,13 @@ input_data = {
 }
 ```
 
+and absorption coefficients in the .csv file:
+
 ```
 "absorption coefficient": [0.3, 0.33, 0.5, 0.53, 0.7], #Absorption coefficient for all surfaces
 ```
 
-Test if the software provides the following results:
+test if the software provides the following results:
 
 - Reverberation time (RT): [0.24, 0.22, 0.13, 0.12, 0.09] s; 
 - Early Decay Time (EDT): [0.24, 0.22, 0.13, 0.13, 0.09] s;

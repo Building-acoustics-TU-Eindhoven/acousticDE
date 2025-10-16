@@ -1,4 +1,4 @@
-﻿# Finite Different Method Use
+﻿# Finite Difference Method Use
 
 ## Requirements
 Set up acousticDE following the instructions in the installation section of the READme file. 
@@ -137,7 +137,7 @@ A low value indicates that most of the energy arrives early, a high value reveal
 The values for all these parameters are calculated from the Barron's revisited theory formulas (Vorlander, 2008) with the influence of the direct field neglected.
 
 ## References
-- J. M. Navarro, J. Escolano, J. J. Lopez, Implementation and evaluation of a diffusion equation model based on finite difference schemes for sound field prediction in rooms, Applied Acoustics 73 (6-7) (2012) 659-665.
+- J. M. Navarro, J. Escolano, J. J. Lopez, Implementation and evaluation of a diffusion equation model based on finite difference schemes for sound field prediction in rooms, Applied Acoustics 73 (6-7) (2012).
 
 - M. Vorl{\"{a}}nder, Auralization: fundamentals of acoustics, modelling, simulation, algorithms and acoustic virtual reality,  Springer 2008.
 

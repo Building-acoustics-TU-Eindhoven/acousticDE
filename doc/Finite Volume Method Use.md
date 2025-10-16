@@ -54,7 +54,7 @@ length_of_mesh = 1
 This script creates the volumetric mesh using Gmsh software. The method is suitable for any type of geometry.
 
 ### General inputs
-The general inputs needs to be set by using the script <a href="https://raw.githubusercontent.com/Building-acoustics-TU-Eindhoven/acousticDE/refs/heads/master/acousticDE/FiniteVolumeMethod/PrepareInputsFVM.py" download>â¬‡ Download PrepareInputsFVM.py</a>
+The general inputs needs to be set by using the script <a href="https://raw.githubusercontent.com/Building-acoustics-TU-Eindhoven/acousticDE/refs/heads/master/acousticDE/FiniteVolumeMethod/PrepareInputsFVM.py" download>Download PrepareInputsFVM.py</a>
 <!-- 
 [_PrepareInputsFVM.py_](https://raw.githubusercontent.com/Building-acoustics-TU-Eindhoven/Diffusion/refs/heads/master/acousticDE/FiniteVolumeMethod/PrepareInputsFVM.py?raw=true) -->
 
@@ -173,9 +173,9 @@ A low value indicate that most of the energy arrives early, a high value reveals
 The values for all these parameters are calculated from the Barronâ€™s revisited theory formulas (Vorlander, 2008) with the influence of the direct field neglected.
 
 ## References
-- R. P. Mu{\~{n}}oz, Numerical modeling for urban sound propagation: developments in wave-based and energy based methods, PhD Thesis, Technische Universiteit Eindhoven, 2019.
+- R. P. Muñoz, Numerical modeling for urban sound propagation: developments in wave-based and energy based methods, PhD Thesis, Technische Universiteit Eindhoven, 2019.
 
-- J. M. Navarro, J. Escolano, J. J. Lopez, Implementation and evaluation of a diffusion equation model based on finite difference schemes for sound field prediction in rooms, Applied Acoustics 73 (6-7) (2012) 659-665.
+- J. M. Navarro, J. Escolano, J. J. Lopez, Implementation and evaluation of a diffusion equation model based on finite difference schemes for sound field prediction in rooms, Applied Acoustics 73 (6-7) (2012).
 
-- M. Vorl{\"{a}}nder, Auralization: fundamentals of acoustics, modelling, simulation, algorithms and acoustic virtual reality,  Springer 2008.
+- M. Vorländer, Auralization: fundamentals of acoustics, modelling, simulation, algorithms and acoustic virtual reality,  Springer 2008.
 
