@@ -53,7 +53,7 @@ The boundary condition above can be discretised for every face of a control volu
 ```{math}
 - D \frac{\partial}{\partial n}  w_j(\mathbf{r}, t) = - h_{(b)j,k}  w_j
 ```
-The term $n$ indicates the vector normal to the surface and the term $h_{(b)j,k}$ is dependent on the absorption coefficient $\alpha$ of the surface are of the $j$ control volume.
+The term $n$ indicates the vector normal to the surface and the term $h_{(b)j,k}$ is dependent on the absorption coefficient $\alpha$ of the surface area of the $j$ control volume.
 
 ### Discretization
 The full discretised partial differential diffusion equation is:
@@ -70,7 +70,7 @@ The full discretised partial differential diffusion equation is:
 ``` -->
 
 ## References
-- R. P. MuÃ±oz, Numerical modeling for urban sound propagation: developments in wave-based and energy based methods, PhD Thesis, Technische Universiteit Eindhoven, 2019.
+- R. P. Mu{\~{n}}oz, Numerical modeling for urban sound propagation: developments in wave-based and energy based methods, PhD Thesis, Technische Universiteit Eindhoven, 2019.
 
-- M. VorlÃ¤nder, Auralization: fundamentals of acoustics, modelling, simulation, algorithms and acoustic virtual reality,  Springer 2008.
+- M. Vorl{\"{a}}nder, Auralization: fundamentals of acoustics, modelling, simulation, algorithms and acoustic virtual reality,  Springer 2008.
 

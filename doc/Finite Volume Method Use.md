@@ -1,7 +1,7 @@
 ﻿# Finite Volume Method Use
 
 ## Requirements
-1. Set up acousticDE following the instructions in the installation section. 
+1. Set up acousticDE following the instructions in the installation section of the READme file. 
 2. Download and install SketchUp from [SketchUp website](https://www.sketchup.com/plans-and-pricing/sketchup-free) or use the free web-based platform;
 3. Download and install g-mesh from [G-msh website](https://gmsh.info/);
 4. Install the MeshKit extension of SketchUp from the extension warehouse.
@@ -79,7 +79,7 @@ file_path = os.path.join(script_dir, '3x3x3.msh') # Full path to the file
 #### Sound source
 The sound sources for this method are defined within the _PrepareInputsFVM.py_ python script. 
 The model allows for the insertion of only one source position per calculation. 
-The sound source is defined as an omnidirectional source. The users can input the sound power of the source $W_s$ in Watts and its position in the room in the following variables *x_{source\}*,*y_\{source\}*,*z_\{source\}* in meters in the x,y,z directions.
+The sound source is defined as an omnidirectional source. The users can input the position in the room in the following variables *x_{source\}*,*y_\{source\}*,*z_\{source\}* in meters in the x,y,z directions.
 
 #### Receiver
 The receivers for this method are defined within the _PrepareInputsFVM.py_ python script. 
@@ -174,9 +174,9 @@ A low value indicate that most of the energy arrives early, a high value reveals
 The values for all these parameters are calculated from the Barronâ€™s revisited theory formulas (Vorlander, 2008) with the influence of the direct field neglected.
 
 ## References
-- R. P. MuÃ±oz, Numerical modeling for urban sound propagation: developments in wave-based and energy based methods, PhD Thesis, Technische Universiteit Eindhoven, 2019.
+- R. P. Mu{\~{n}}oz, Numerical modeling for urban sound propagation: developments in wave-based and energy based methods, PhD Thesis, Technische Universiteit Eindhoven, 2019.
 
-- J. M. Navarro, J. Escolano, J. J. Lopez, Implementation and evaluation of a diffusion equation model based on finite difference schemes for sound field prediction in rooms, Applied Acoustics 73 (6-7) (2012) 659â€“665.
+- J. M. Navarro, J. Escolano, J. J. Lopez, Implementation and evaluation of a diffusion equation model based on finite difference schemes for sound field prediction in rooms, Applied Acoustics 73 (6-7) (2012) 659-665.
 
-- M. VorlÃ¤nder, Auralization: fundamentals of acoustics, modelling, simulation, algorithms and acoustic virtual reality,  Springer 2008.
+- M. Vorl{\"{a}}nder, Auralization: fundamentals of acoustics, modelling, simulation, algorithms and acoustic virtual reality,  Springer 2008.
 

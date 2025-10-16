@@ -1,7 +1,7 @@
 ﻿# Finite Different Method Use
 
 ## Requirements
-Set up acousticDE following the instructions in the installation section. 
+Set up acousticDE following the instructions in the installation section of the READme file. 
 
 ## Usage & files
 To use the software, the following files are to be used:
@@ -48,7 +48,7 @@ The method is suitable for parallelepiped and cuboid spaces and therefore, the o
 
 ### Sound source
 The model allows for the insertion of only one source position per calculation. 
-The sound source is defined as an omnidirectional source. The users can input the sound power of the source *W_{s}* in Watts and its position in the room in the following variables *x_{source\}*,*y_\{source\}*,*z_\{source\}* in meters in the x,y,z directions.
+The sound source is defined as an omnidirectional source. The users can input the position in the room in the following variables *x_{source\}*,*y_\{source\}*,*z_\{source\}* in meters in the x,y,z directions.
 
 ### Receiver
 The model allows for the insertion of only one acoustics receiver position per calculation. These are defined as point omnidirectional receivers. The users will input the position of the receiver in the room in the following variables *x_\{rec\}*,*y_\{rec\}*,*z_\{rec\}* in meters in the x,y,z directions. The receiver position cannot be equal to the source position, otherwise it will give an error.
@@ -63,7 +63,7 @@ The frequency resolution should be included as inputs variables *fc_\{low\}* and
 ### Spatial discretization $\Delta x$
 The Finite Different method works with a spatial discretization. The space is defined by a mesh grid of points at a distance $\Delta v$ between each other. The distance $\Delta v$ is equal for each dimension $x,y,z$, therefore $\Delta v = \Delta x = \Delta y = \Delta z$, and it is defined in meters. 
 It is important to choose an appropriate $\Delta v$ for the precision of the calculation. 
-A $\Delta v$ of 0.5 meters normally would suffice for a correct calculation, although the choice is contingent upon user preferences for details in parameters values and room dimensions. It is strongly advised that $\Delta v$ is a factor of the dimensions of the room (e.g. for a room of 3 x 3 x 3 $m^3$, $\Delta v$ could be 0.5 meters or 0.2 meters or 0.1 meters but it should not be 0.4 meters). 
+A $\Delta v$ of 0.5 meters normally would suffice for a correct calculation (using a appropriate $\Delta t$ as per section below and for frequency range between 125 Hz and 2000 Hz), although the choice is contingent upon user preferences for details in parameters values and room dimensions. It is strongly advised that $\Delta v$ is a factor of the dimensions of the room (e.g. for a room of 3 x 3 x 3 $m^3$, $\Delta v$ could be 0.5 meters or 0.2 meters or 0.1 meters but it should not be 0.4 meters). 
 
 ### Time discretization $\Delta t$
 According the Navarro 2012, to get good converged results, the time discretization $\Delta t$ will need to be defined depending on the $\Delta v$ chosen. 
@@ -137,7 +137,7 @@ A low value indicate that most of the energy arrives early, a high value reveals
 The values for all these parameters are calculated from the Barronâ€™s revisited theory formulas (Vorlander, 2008) with the influence of the direct field neglected.
 
 ## References
-- J. M. Navarro, J. Escolano, J. J. Lopez, Implementation and evaluation of a diffusion equation model based on finite difference schemes for sound field prediction in rooms, Applied Acoustics 73 (6-7) (2012) 659â€“665.
+- J. M. Navarro, J. Escolano, J. J. Lopez, Implementation and evaluation of a diffusion equation model based on finite difference schemes for sound field prediction in rooms, Applied Acoustics 73 (6-7) (2012) 659-665.
 
-- M. VorlÃ¤nder, Auralization: fundamentals of acoustics, modelling, simulation, algorithms and acoustic virtual reality,  Springer 2008.
+- M. Vorl{\"{a}}nder, Auralization: fundamentals of acoustics, modelling, simulation, algorithms and acoustic virtual reality,  Springer 2008.
 

@@ -24,7 +24,7 @@ Each method is distributed with its own Python code. The main application of the
    :maxdepth: 2
    :caption: Software Use:
 
-   Finite Different Method Use.md
+   Finite Difference Method Use.md
    Finite Volume Method Use.md
    Auralization Use.md
 
@@ -49,7 +49,7 @@ Each method is distributed with its own Python code. The main application of the
    :maxdepth: 2
    :caption: Tutorials:
 
-   Finite Different Method Demo Tutorial.md
+   Finite Difference Method Demo Tutorial.md
    Finite Volume Method Demo Tutorial.md
 
 Indices and tables
