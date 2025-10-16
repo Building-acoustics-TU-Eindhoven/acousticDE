@@ -24,8 +24,8 @@ The result file from the FVM calculation is needed to run the script.
 ## Outputs
 
 ### Impulse response file
-An impulse response wav file representing the reverberant fingerprint of the room is the outoput of the calculation.
+An impulse response wav file representing the reverberant fingerprint of the room is the output of the calculation.
 
 ### Auralization file
-The calculation include also the creating of a auralization wav file.
+The calculation include also the creating of an auralization wav file.
 

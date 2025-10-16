@@ -195,23 +195,23 @@ def get_nodes_elem(dim,tag):
         nodecoords : array of floats
             The coordinates of each node in the mesh
         node_indices : dict 
-            Indeces of all the nodes in the mesh
+            Indices of all the nodes in the mesh
         bounEl : array of int 
-            Indeces of all the boundary surfaces in the mesh
+            Indices of all the boundary surfaces in the mesh
         bounNode : array of int 
-            Indeces of all the boundary nodes per each boundary surface in the mesh
+            Indices of all the boundary nodes per each boundary surface in the mesh
         voluEl : array of int
-            Indeces of all the bolume elements (tetrahedra) in the mesh
+            Indices of all the volume elements (tetrahedra) in the mesh
         voluNode : array of int 
-            Indeces of all the volumetric nodes per each colume element in the mesh
+            Indices of all the volumetric nodes per each colume element in the mesh
         belemNodes : array of int
-            Indeces of all the boundary nodes per each boundary surface in the mesh
+            Indices of all the boundary nodes per each boundary surface in the mesh
         velemNodes : array of int 
-            Indeces of all the volumetric nodes per each colume element in the mesh
+            Indices of all the volumetric nodes per each colume element in the mesh
         boundaryEl_dict : dict
-            Dictionary with key the index of the boundary element (boudnary surface) and value the indeces of the nodes of the surface
+            Dictionary with key the index of the boundary element (boudnary surface) and value the Indices of the nodes of the surface
         volumeEl_dict : dict 
-            Dictionary with key the index of the volumetric element (tetrahedra) and value the indeces of the nodes of the tetrahedra
+            Dictionary with key the index of the volumetric element (tetrahedra) and value the Indices of the nodes of the tetrahedra
     """
     # Nodes
     #tag = -1  # all the nodes of the room
@@ -282,11 +282,11 @@ def velem_volume_centre(volumeEl_dict,nodecoords,node_indices):
     Parameters
     ----------
         volumeEl_dict : dict 
-            Dictionary with key the index of the volumetric element (tetrahedra) and value an array with the indeces of the nodes of the tetrahedra (maximum 4 indeces)
+            Dictionary with key the index of the volumetric element (tetrahedra) and value an array with the Indices of the nodes of the tetrahedra (maximum 4 Indices)
         nodecoords : array of floats 
             The coordinates of each node in the mesh
         node_indices : dict
-            Indeces of all the nodes in the mesh
+            Indices of all the nodes in the mesh
 
     Returns
     -------
@@ -343,11 +343,11 @@ def belem_area_centre(boundaryEl_dict,nodecoords,node_indices):
     Parameters
     ----------
         boundaryEl_dict : dict
-            Dictionary with key the index of the boundary element (boudnary surface) and value an array with the indeces of the nodes of the surface (maximum 3 indeces)
+            Dictionary with key the index of the boundary element (boudnary surface) and value an array with the Indices of the nodes of the surface (maximum 3 Indices)
         nodecoords : array of floats
             The coordinates of each node in the mesh
         node_indices : dict
-            Indeces of all the nodes in the mesh
+            Indices of all the nodes in the mesh
 
     Returns
     -------
@@ -393,14 +393,14 @@ def get_neighbour_faces(voluEl):
     Parameters
     ----------
         voluEl : array of int 
-            Indeces of all the volume elements (tetrahedra) in the mesh
+            Indices of all the volume elements (tetrahedra) in the mesh
 
     Returns
     -------
         fxt : dict 
             Dictionary with keys as the nodes of each face and values the volume elements of which this face is neighbour
         txt : dict 
-            Dictionary with keys as the tetrahedron tag and values as the tet that are neighbours (the tet at the boundary are not counted)
+            Dictionary with keys as the tetrahedron tag and values as the tet that are neighbours (the tetrahedrons at the boundary are not counted)
         neighbourVolume : array of floats 
             Array with the neighbours tetrahedron per each tetrahedron in order from 0 to the number of tetrahedrons
     """
@@ -421,7 +421,7 @@ def get_neighbour_faces(voluEl):
             fxt[f].append(tet)
 
     # Computing neighbors by face
-    txt = {}  # dictionary with keys as the tetrahedron tag and values as the tet that are neighbours (the tet at the boundary are not counted)
+    txt = {}  # dictionary with keys as the tetrahedron tag and values as the tet that are neighbours (the tetrahedrons at the boundary are not counted)
     for i in range(0, len(faces)):
         # print(i)
         f = faces[i]  # f is a tuple of the nodes of the face into consideration
@@ -461,15 +461,15 @@ def interior_tetra(voluEl,cell_center,velemNodes,nodecoords,node_indices):
     Parameters
     ----------
         voluEl : array of int 
-            Indeces of all the bolume elements (tetrahedra) in the mesh
+            Indices of all the volume elements (tetrahedra) in the mesh
         cell_center : array of floats
             The coordinates of the center of the cell element per each element
         velemNodes : array of int 
-            Indeces of all the volumetric nodes per each colume element in the mesh
+            Indices of all the volumetric nodes per each colume element in the mesh
         nodecoords : array of floats 
             The coordinates of each node in the mesh
         node_indices : dict 
-            Indeces of all the nodes in the mesh
+            Indices of all the nodes in the mesh
 
     Returns
     -------
@@ -591,7 +591,7 @@ def surface_area(surface_absorption, nodecoords, node_indices):
         nodecoords : array of floats 
             The coordinates of each node in the mesh
         node_indices :dict 
-            Indeces of all the nodes in the mesh
+            Indices of all the nodes in the mesh
 
     Returns
     -------
@@ -628,15 +628,15 @@ def boundary_triang(velemNodes, nBands, bounNode, nodecoords, node_indices, tria
     Parameters
     ----------
         velemNodes : array of int
-            Indeces of all the volumetric nodes per each colume element in the mesh
+            Indices of all the volumetric nodes per each colume element in the mesh
         nBands : int 
             Number of frequency bands
         bounNode : array of int 
-            Indeces of all the boundary nodes per each boundary surface in the mesh
+            Indices of all the boundary nodes per each boundary surface in the mesh
         nodecoords : array of floats
             The coordinates of each node in the mesh
         node_indices : dict 
-            Indeces of all the nodes in the mesh
+            Indices of all the nodes in the mesh
         triangle_face_absorption : list of arrays
             Absorption term value for each triangle face at the boundary
 
@@ -895,7 +895,7 @@ def source_interp(cell_center, coord_source):
     Returns
     -------
         cl_tet_s_keys : Dict keys
-            Clossest tetrahedrons indeces to the source
+            Closest tetrahedrons Indices to the source
         total_weights_s : dict
             Weights for each 4 closest points to the source position for interpolation
     """
@@ -911,7 +911,7 @@ def source_interp(cell_center, coord_source):
     dist_source_cc_list_sorted = sorted(dist_source_cc_list) #sorted from the minimum to the maximum distance
     selected_source_cc_list = dist_source_cc_list_sorted[:4] #take only the first four element of the sorted list (take the first 4 cell centres closest to the source)
     
-    dist_source_cc_list_sorted_indices = np.argsort(dist_source_cc_list)[:4] #takes the indeces of the minimum distances
+    dist_source_cc_list_sorted_indices = np.argsort(dist_source_cc_list)[:4] #takes the Indices of the minimum distances
     #selected_source_cc_list_indices = dist_source_cc_list_sorted_indices[:4] #does exactly the same as the previous line
     
     #cl_tet_s stands for cl=closest, tet=tetrahedron, s=to the source
@@ -935,7 +935,7 @@ def source_interp(cell_center, coord_source):
     for i,weight in total_weights_s.items():
         total_weights_s[i] = weight/sum_weights_s if sum_weights_s != 0 else 0
     
-    cl_tet_s_keys = cl_tet_s.keys() #take only the keys of the cl_tet_s dictionary (so basically the indexes of the tetrahedrons)
+    cl_tet_s_keys = cl_tet_s.keys() #take only the keys of the cl_tet_s dictionary (so basically the Indices of the tetrahedrons)
 
     return cl_tet_s_keys, total_weights_s
 
@@ -951,7 +951,7 @@ def source_volume(velemNodes, nodecoords, coord_source, cell_volume):
     Parameters
     ----------
         velemNodes : array of int
-            Indeces of all the volumetric nodes per each colume element in the mesh
+            Indices of all the volumetric nodes per each colume element in the mesh
         nodecoords : array of floats
             The coordinates of each node in the mesh
         coord_source : list
@@ -1042,9 +1042,9 @@ def source_matrix(voluEl,cl_tet_s_keys, source1, total_weights_s):
     Parameters
     ----------
         voluEl : array of int
-            Indeces of all the bolume elements (tetrahedra) in the mesh
+            Indices of all the volume elements (tetrahedra) in the mesh
         cl_tet_s_keys : Dict keys
-            Clossest tetrahedrons indeces to the source
+            Closest tetrahedrons Indices to the source
         source1 : array of floats
             Energy density of source number 1 at each time step position
         total_weights_s : dict
@@ -1081,7 +1081,7 @@ def receiver_interp(cell_center, coord_rec):
     Returns
     -------
         cl_tet_r_keys : dict keys
-            Closest tetrahedrons indeces to the receiver
+            Closest tetrahedrons Indices to the receiver
         total_weights_r : dict
             Weights for each 4 closest points to the receiver position for interpolation
     """
@@ -1097,7 +1097,7 @@ def receiver_interp(cell_center, coord_rec):
     dist_rec_cc_list_sorted = sorted(dist_rec_cc_list) #sorted from the minimum to the maximum distance
     selected_rec_cc_list = dist_rec_cc_list_sorted[:4] #take only the first four element of the sorted list (take the first 4 cell centres closest to the source)
     
-    dist_rec_cc_list_sorted_indices = np.argsort(dist_rec_cc_list)[:4] #takes the indeces of the minimum distances
+    dist_rec_cc_list_sorted_indices = np.argsort(dist_rec_cc_list)[:4] #takes the Indices of the minimum distances
     #selected_rec_cc_list_indices = dist_rec_cc_list_sorted_indices[:4] #does exactly the same as the previous line
     
     #cl_tet_s stands for cl=closest, tet=tetrahedron, s=to the source
@@ -1121,7 +1121,7 @@ def receiver_interp(cell_center, coord_rec):
     for i,weight in total_weights_r.items():
         total_weights_r[i] = weight/sum_weights_r if sum_weights_r != 0 else 0
     
-    cl_tet_r_keys = cl_tet_r.keys() #take only the keys of the cl_tet_s dictionary (so basically the indexes of the tetrahedrons)
+    cl_tet_r_keys = cl_tet_r.keys() #take only the keys of the cl_tet_s dictionary (so basically the Indices of the tetrahedrons)
     
     return cl_tet_r_keys, total_weights_r
 
@@ -1202,11 +1202,11 @@ def line_receivers(room_length, room_width, coord_rec, coord_source, cell_center
         y_axis : array of floats
             Linspace on y_axis with distance dy
         line_rec_x_idx_list : list
-            Indexes of center cells close to the line receiver position in the x axis
+            Indices of center cells close to the line receiver position in the x axis
         dist_x : array of floats 
             Distance between each line receiver point cell and the source in the x axis
         line_rec_y_idx_list : list
-            Indexes of center cells close to the line receiver position in the y axis
+            Indices of center cells close to the line receiver position in the y axis
         dist_y : array of floats 
             Distance between each line receiver point cell and the source in the y axis
     """
@@ -1298,7 +1298,7 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
         nBands : int
             Number of frequency bands
         voluEl : array of int
-            Indeces of all the bolume elements (tetrahedra) in the mesh
+            Indices of all the volume elements (tetrahedra) in the mesh
         recording_steps : int 
             Number of time steps
         beta_zero_freq : list
@@ -1318,13 +1318,13 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
         s : array of floats 
             Matrix of tretrahedron central points inserting source energy
         cl_tet_r_keys : dict keys
-            Closest tetrahedrons indeces to the receiver
+            Closest tetrahedrons Indices to the receiver
         total_weights_r : dict
             Weights for each 4 closest points to the receiver position for interpolation
         tcalc : str
             Type of calculation; "decay" if the source switches off and "stationarysource" if the source is stationary
         cl_tet_s_keys : dict keys
-            Closest tetrahedrons indeces to the source
+            Closest tetrahedrons Indices to the source
         total_weights_s : dict
             Weights for each 4 closest points to the source position for interpolation
         source1 : array of floats
@@ -1453,11 +1453,11 @@ def freq_parameters(nBands, line_rec_x_idx_list, w_new_band, line_rec_y_idx_list
         nBands : int
             Number of frequency bands
         line_rec_x_idx_list : list
-            Indexes of center cells close to the line receiver position in the x axis
+            Indices of center cells close to the line receiver position in the x axis
         w_new_band : list of arrays
             Energy density at the time step n+1 at each centre cell per each frequency band
         line_rec_y_idx_list : list
-            Indexes of center cells close to the line receiver position in the y axis
+            Indices of center cells close to the line receiver position in the y axis
         rho : float 
             Density of air
         c0 : int

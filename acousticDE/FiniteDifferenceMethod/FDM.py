@@ -43,7 +43,7 @@ def run_fdm_sim(inputs_path):
     Returns
     -------
     results : dict
-        Dictionary of all the variable calculated during the simulation
+        Dictionary of all the variables calculated during the simulation
     """
     
     st = time.time() #start time of calculation

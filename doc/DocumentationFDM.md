@@ -29,7 +29,7 @@ The term $n$ indicates the vector normal to the surface and the term $A_{r}$ is 
 
 ### Diffusion Equation
 The software is implemented using the explicit unconditionally stable numerical Finite Different Method called Du Fort and Frankel to solve the diffusion equation (Navarro et al., 2012).
-The Dufort and Frankel method is an expansion of the Forward-Time-Centere-space (FTCS) method with a truncation order of $O[\Delta t^2] + O[\Delta v^2] + O[\Delta t^2 x \Delta v^2]$. It is an explicit and unconditionally stable method with $\Delta t$ as time step discretization and $\Delta v=\Delta x=\Delta y=\Delta z$ as spatial discretization. The $\Delta v$ and $\Delta t$ are to define depending on the room in order for the results to converge to the exact one (Navarro et al. 2012). Generally a $\Delta v < 0.5$ and $ \Delta t > 1/32000$ is sufficient, but it depends on the dimensions of the room and the precision to obtain. The smaller the two values the more accurate the calculation will be however, with an increase in computational time.
+The Dufort and Frankel method is an expansion of the Forward-Time-Centere-space (FTCS) method with a truncation order of $O[\Delta t^2] + O[\Delta v^2] + O[\Delta t^2 x \Delta v^2]$. It is an explicit and unconditionally stable method with $\Delta t$ as time step discretization and $\Delta v=\Delta x=\Delta y=\Delta z$ as spatial discretization. The $\Delta v$ and $\Delta t$ are to be defined depending on the room in order for the results to converge to the exact one (Navarro et al. 2012). Generally a $\Delta v < 0.5$ and $ \Delta t > 1/32000$ is sufficient, but it depends on the dimensions of the room and the precision to obtain. The smaller the two values the more accurate the calculation will be however, with an increase in computational time.
 
 According to the Dufort and Frankel method, the discretization is based on the following:
 
@@ -46,7 +46,7 @@ The full discretised partial differential equation is:
 
 ```{math}
 w_{i,j,k}^{n+1} = \frac{1}{1+ \beta_{0}} \Big( 
-(w_{i,j,k}^{n-1} (1- \beta_{0}) - 2\Delta t \, c_{l} \, w_{i,j,k}^{n} - 2 \Delta t \, P_{i_s,j_s,k_s}^{n}) \\
+(w_{i,j,k}^{n-1} (1- \beta_{0}) - 2\Delta t \, c m \, w_{i,j,k}^{n} - 2 \Delta t \, P_{i_s,j_s,k_s}^{n}) \\
 + \beta_{0x}(w_{i+1,j,k}^{n} + w_{i-1,j,k}^{n}) 
 + \beta_{0y}(w_{i,j+1,k}^{n} + w_{i,j-1,k}^{n}) 
 + \beta_{0z}(w_{i,j,k+1}^{n} + w_{i,j,k-1}^{n}) 
@@ -67,13 +67,13 @@ Each term of the equation is discretized as follows:
 \frac{\partial w(\mathbf{r}, t)}{\partial t} => w_{i,j,k}^{n} = \frac{w_{i,j,k}^{n+1} - w_{i,j,k}^{n-1}}{2 \Delta t}
 ```
 ```{math}
-\frac{\partial ^2 w(\mathbf{r}, t)} {\partial x^2} => w_{i,j,k}^n = \frac{w_{i+1,j,k}^n - 2(\frac{w_{i,j,k}^{n+1}+w_{i,j,k}^{n-1}}{2}+w_{i-1,j,k}^n)}{\Delta x^2}
+\frac{\partial ^2 w(\mathbf{r}, t)} {\partial x^2} => w_{i,j,k}^n = \frac{w_{i+1,j,k}^n - 2(\frac{w_{i,j,k}^{n+1}+w_{i,j,k}^{n-1}}{2})+w_{i-1,j,k}^n}{\Delta x^2}
 ```
 ```{math}
-\frac{\partial ^2 w(\mathbf{r}, t)} {\partial y^2} => w_{i,j,k}^n = \frac{w_{i,j+1,k}^n - 2(\frac{w_{i,j,k}^{n+1}+w_{i,j,k}^{n-1}}{2}+w_{i,j-1,k}^n)}{\Delta y^2}
+\frac{\partial ^2 w(\mathbf{r}, t)} {\partial y^2} => w_{i,j,k}^n = \frac{w_{i,j+1,k}^n - 2(\frac{w_{i,j,k}^{n+1}+w_{i,j,k}^{n-1}}{2})+w_{i,j-1,k}^n}{\Delta y^2}
 ```
 ```{math}
-\frac{\partial ^2 w(\mathbf{r}, t)} {\partial z^2} => w_{i,j,k}^n = \frac{w_{i,j,k+1}^n - 2(\frac{w_{i,j,k}^{n+1}+w_{i,j,k}^{n-1}}{2}+w_{i,j,k-1}^n)}{\Delta z^2}
+\frac{\partial ^2 w(\mathbf{r}, t)} {\partial z^2} => w_{i,j,k}^n = \frac{w_{i,j,k+1}^n - 2(\frac{w_{i,j,k}^{n+1}+w_{i,j,k}^{n-1}}{2})+w_{i,j,k-1}^n}{\Delta z^2}
 ```
 ```{math}
 c m w(\mathbf{r}, t) => c m w_{i,j,k}^n
@@ -103,7 +103,7 @@ Only the one directional formulas have been included as examples.
 ```{math}
 \frac{\partial w(\mathbf{r}, t)}{\partial n} => w_{L_{x}}^{n+1} = \frac{3 w_{L_{x}}^{n+1}-4w_{L_{x-1}}^{n+1}+ w_{L_{x-2}}^{n+1}}{2\Delta x}
 ```
-And the discretized boundary reshaped are:
+And the discretized boundary conditions are:
 
 1.1. Forward Difference Approximation for $x=0$, any $j$ and any $k$
 ```{math}
