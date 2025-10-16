@@ -24,16 +24,16 @@ input_data = {
 }
 ```
 
-Test if the software provides the following results (Navarro et al., 2012):
+Test if the software provides the following results:
 
-- Reverberation time (RT): 1.18 s; 
-- Early Decay Time (EDT): 1.18 s;
-- Clarity ($C_{80}$): 2.08 dB;
-- Definition ($D_{50}$): 45.63 %
-- Centre Time ($T_{s}$): 85.33 ms
+- Reverberation time (RT): [1.22, 1.22, 1.22, 1.22, 1.22] s; 
+- Early Decay Time (EDT): [1.22, 1.22, 1.22, 1.22, 1.22] s;
+- Clarity ($C_{80}$): [1.66, 1.66, 1.66, 1.66, 1.66] dB;
+- Definition ($D_{50}$): [43.13, 43.13, 43.13, 43.13, 43.13] %
+- Centre Time ($T_{s}$): [88.58, 88.58, 88.58, 88.58, 88.58] ms
 
 The result file is a pickle file called _resultsFDM.pkl_. All the results are included in this file.
 
 ## References
-- J. M. Navarro, J. Escolano, J. J. Lopez, Implementation and evaluation of a diffusion equation model based on finite difference schemes for sound field prediction in rooms, Applied Acoustics 73 (6-7) (2012) 659â€“665.
+- J. M. Navarro, J. Escolano, J. J. Lopez, Implementation and evaluation of a diffusion equation model based on finite difference schemes for sound field prediction in rooms, Applied Acoustics 73 (6-7) (2012) 659-665.
 

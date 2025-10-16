@@ -15,7 +15,7 @@ import pickle
 import os
 from acousticDE.Auralization.Auralizationfunctions import *
 
-def run_auralization(anechoic_signal_path,resultsFVM_path):
+def run_auralization(anechoic_signal_path,results_path):
     """
     Function for running the full auralization calculation. It will use all the functions defined in Auralizationfunctions.py file
 
@@ -23,8 +23,8 @@ def run_auralization(anechoic_signal_path,resultsFVM_path):
     ----------
         anechoic_signal_path : str
             String of the wav file of the anechoic sound
-        resultsFVM_path : str
-            String of the results from the FVM simulation
+        results_path : str
+            String of the results from the FVM or FDM simulation
         
     Returns
     -------
@@ -32,14 +32,14 @@ def run_auralization(anechoic_signal_path,resultsFVM_path):
             Dictionary of all the variable calculated including auralization and impulse response wav files.
     """
   
-    with open(resultsFVM_path, "rb") as f:
-        resultsFVM = pickle.load(f)
+    with open(results_path, "rb") as f:
+        results_sim = pickle.load(f)
    
     #Import data needed from the resultsFVM pickle file
-    dt_sim = resultsFVM["dt"]   #Import delta t (time step) from the simulation calc
-    t_off_sim = resultsFVM["t_off"]   #Import the time t array since the source has been switched off from the simulation calc
-    p_rec_off_deriv_band = np.array(resultsFVM["p_rec_off_deriv_band"]) #import pressure curve from the simulation calc
-    center_freq = np.array(resultsFVM["center_freq"]) #import frequency bands from the simulation calc
+    dt_sim = results_sim["dt"]   #Import delta t (time step) from the simulation calc
+    t_off_sim = results_sim["t_off"]   #Import the time t array since the source has been switched off from the simulation calc
+    p_rec_off_deriv_band = np.array(results_sim["p_rec_off_deriv_band"]) #import pressure curve from the simulation calc
+    center_freq = np.array(results_sim["center_freq"]) #import frequency bands from the simulation calc
     
     #%%
     ###############################################################################

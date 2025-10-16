@@ -126,13 +126,13 @@ def run_fdm_sim(inputs_path):
     dist_x, dist_y = dist_source_x_y(xx, yy, zz, row_lr_r, row_up_r, col_lr_r, col_up_r, dep_lr_r, dep_up_r, weight_row_lr_r, weight_row_up_r, weight_col_lr_r, weight_col_up_r, weight_dep_lr_r, weight_dep_up_r, coord_source)
     
     #Calling function %computing_energy_density%
-    w_new_band, w_t0_band, w_rec_band, w_rec_off_band, w_rec_x_t0_band, idx_w_rec = comput_energy_density(nBands, c0, m_atm, Nx, Ny, Nz, recording_steps, x, y, z, recording_time, dt, beta_zero, 
+    w_new_band, w_t0_band, w_rec_band, w_rec_off_band, w_rec_x_t0_band, w_rec_off_deriv_band, p_rec_off_deriv_band, idx_w_rec, t_off = comput_energy_density(nBands, c0, m_atm, Nx, Ny, Nz, recording_steps, x, y, z, recording_time, dt, beta_zero, 
                                  beta_zero_x , beta_zero_y, beta_zero_z, dx, dy, dz, Dx, Dy, Dz, t, sourceon_time, sourceon_steps,
                                  Abs_1, Abs_2, Abs_3, Abs_4, Abs_5, Abs_6, s, source1, 
                                  row_lr_s, row_up_s, col_lr_s, col_up_s, dep_lr_s, dep_up_s, 
                                  weight_row_lr_s, weight_row_up_s, weight_col_lr_s, weight_col_up_s, weight_dep_lr_s, weight_dep_up_s, 
                                  row_lr_r, row_up_r, col_lr_r, col_up_r, dep_lr_r, dep_up_r, 
-                                 weight_row_lr_r, weight_row_up_r, weight_col_lr_r, weight_col_up_r, weight_dep_lr_r, weight_dep_up_r, tcalc)
+                                 weight_row_lr_r, weight_row_up_r, weight_col_lr_r, weight_col_up_r, weight_dep_lr_r, weight_dep_up_r, rho, tcalc)
     
     print("Post-processing calculations...")
     #Calling function %freq_parameters%
@@ -170,11 +170,14 @@ def run_fdm_sim(inputs_path):
                "tcalc" : tcalc,
                "center_freq" : center_freq,
                "t": t,
+               "t_off": t_off,
                "w_new_band" : w_new_band, 
                "w_t0_band" : w_t0_band,
                "w_rec_band" : w_rec_band, 
                "w_rec_off_band" : w_rec_off_band, 
                "w_rec_x_t0_band" : w_rec_x_t0_band,
+               "w_rec_off_deriv_band" : w_rec_off_deriv_band, 
+               "p_rec_off_deriv_band" : p_rec_off_deriv_band,
                "idx_w_rec" : idx_w_rec,                      
                "spl_r_band" : spl_r_band, 
                "spl_r_off_band" : spl_r_off_band, 
