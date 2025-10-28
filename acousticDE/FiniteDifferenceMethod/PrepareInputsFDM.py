@@ -25,7 +25,7 @@ input_data = {
     "fc_high": 4000, #highest frequency
     "num_octave": 1, # 1 or 3 depending on how many octave you want
     "dx": 0.5,
-    "dt": 1/8000, #time discretization
+    "dt": 1/20000, #time discretization
     "m_atm": 0, #air absorption coefficient [1/m]
     "th": 3, #int(input("Enter type Absortion conditions (option 1,2,3):")) # options Sabine (th=1), Eyring (th=2) and modified by Xiang (th=3)
     "tcalc": "decay" #Choose "decay" if the objective is to calculate the energy decay of the room with all its energetic parameters; Choose "stationarysource" if the aim is to understand the behaviour of a room subject to a stationary source

@@ -59,7 +59,7 @@ def room_charact(length,width,height):
     Parameters
     ----------
     length : float
-        length of the room in meters.
+        Length of the room in meters.
     width : float
         Width of the room in meters.
     height : float
@@ -100,7 +100,7 @@ def create_mesh(length, width, height, dx, dy, dz):
     Parameters
     ----------
     length : float
-        length of the room in meters.
+        Length of the room in meters.
     width : float
         Width of the room in meters.
     height : float
@@ -153,7 +153,7 @@ def abs_term(th,alpha,c0):
         th : int
             The options for the absorption term; Sabine (th=1), Eyring (th=2) and modified by Xiang (th=3)
         alpha : list
-            Absrption coefficient for each frequency
+            Absorption coefficient for each frequency
         c0 : int 
             Speed of sound 
 
@@ -187,17 +187,17 @@ def equiv_absorp(alpha_1, alpha_2, alpha_3, alpha_4, alpha_5, alpha_6, S1, S2, S
     Parameters
     ----------
         alpha_1 : list
-            Absrption coefficient for each frequency of Surface 1
+            Absorption coefficient for each frequency of Surface 1
         alpha_2 : list
-            Absrption coefficient for each frequency of Surface 2
+            Absorption coefficient for each frequency of Surface 2
         alpha_3 : list
-            Absrption coefficient for each frequency of Surface 3
+            Absorption coefficient for each frequency of Surface 3
         alpha_4 : list
-            Absrption coefficient for each frequency of Surface 4
+            Absorption coefficient for each frequency of Surface 4
         alpha_5 : list
-            Absrption coefficient for each frequency of Surface 5
+            Absorption coefficient for each frequency of Surface 5
         alpha_6 : list
-            Absrption coefficient for each frequency of Surface 6
+            Absorption coefficient for each frequency of Surface 6
         S1 : float
             Surface area of the Surface 1 (floor).
         S2 : float
@@ -679,7 +679,7 @@ def comput_energy_density(nBands, c0, m_atm, Nx, Ny, Nz, recording_steps, x, y, 
                              row_lr_s, row_up_s, col_lr_s, col_up_s, dep_lr_s, dep_up_s, 
                              weight_row_lr_s, weight_row_up_s, weight_col_lr_s, weight_col_up_s, weight_dep_lr_s, weight_dep_up_s, 
                              row_lr_r, row_up_r, col_lr_r, col_up_r, dep_lr_r, dep_up_r, 
-                             weight_row_lr_r, weight_row_up_r, weight_col_lr_r, weight_col_up_r, weight_dep_lr_r, weight_dep_up_r, 
+                             weight_row_lr_r, weight_row_up_r, weight_col_lr_r, weight_col_up_r, weight_dep_lr_r, weight_dep_up_r, rho,
                              tcalc):
     """
     Computation of energy density
@@ -800,6 +800,8 @@ def comput_energy_density(nBands, c0, m_atm, Nx, Ny, Nz, recording_steps, x, y, 
             Lower interpolation weight in the z direction of the receiver position
         weight_dep_up_r : float
             Upper interpolation weight in the z direction of the receiver position
+        rho : float
+            Density of air
         tcalc : str
             Type of calculation; "decay" if the source switches off and "stationarysource" if the source is stationary
 
@@ -823,6 +825,8 @@ def comput_energy_density(nBands, c0, m_atm, Nx, Ny, Nz, recording_steps, x, y, 
     w_rec_band = np.zeros((nBands, recording_steps))
     w_rec_off_band = []
     w_rec_x_t0_band = np.zeros((nBands, len(x)))
+    w_rec_off_deriv_band = []
+    p_rec_off_deriv_band = []
     
     curPercent = 0
     
@@ -918,6 +922,20 @@ def comput_energy_density(nBands, c0, m_atm, Nx, Ny, Nz, recording_steps, x, y, 
             
             idx_w_rec = np.argmin(np.abs(t - sourceon_time))
             w_rec_off = w_rec[idx_w_rec:]
+            p_rec_off = (w_rec[idx_w_rec:])*rho*c0**2
+            t_off = t[idx_w_rec:]
+            
+            #Envelope of Impulse response from the energy density
+            w_rec_off_deriv = w_rec_off #initialising an array of derivative equal to the w_rec_off -> this will be the impulse response after modifying it
+            w_rec_off_deriv = np.delete(w_rec_off_deriv, 0) #delete the first element of the array -> this means shifting the array one step before and therefore do a derivation
+            w_rec_off_deriv = np.append(w_rec_off_deriv,0) #add a zero in the last element of the array -> for derivation and to have the same length as previously
+            #impulse = ((w_rec_off - w_rec_off_deriv))/dt#/(rho*c0**2) #This is the difference between the the energy density and the impulse response 
+            
+            #Envelope of Impulse response from the pressure
+            p_rec_off_deriv = p_rec_off #initialising an array of derivative equal to the w_rec_off -> this will be the impulse response after modifying it
+            p_rec_off_deriv = np.delete(p_rec_off_deriv, 0) #delete the first element of the array -> this means shifting the array one step before and therefore do a derivation
+            p_rec_off_deriv = np.append(p_rec_off_deriv,0) #add a zero in the last element of the array -> for derivation and to have the same length as previously
+            
             
             if steps == sourceon_steps:
                 #print("Steps for source:",steps)
@@ -968,6 +986,8 @@ def comput_energy_density(nBands, c0, m_atm, Nx, Ny, Nz, recording_steps, x, y, 
         w_rec_band[iBand] = w_rec
         w_rec_off_band.append(w_rec_off) 
         w_rec_x_t0_band[iBand] = w_rec_x_t0
+        w_rec_off_deriv_band.append(w_rec_off_deriv)
+        p_rec_off_deriv_band.append(p_rec_off_deriv)
     
     #plt.show()
     
@@ -989,7 +1009,7 @@ def comput_energy_density(nBands, c0, m_atm, Nx, Ny, Nz, recording_steps, x, y, 
                             (w_new[row_up_r, :, dep_lr_r]*(weight_row_up_r * weight_col_up_r * weight_dep_lr_r))+\
                                 (w_new[row_up_r, :, dep_up_r]*(weight_row_up_r * weight_col_up_r * weight_dep_up_r)))
 
-    return w_new_band, w_t0_band, w_rec_band, w_rec_off_band, w_rec_x_t0_band, idx_w_rec
+    return w_new_band, w_t0_band, w_rec_band, w_rec_off_band, w_rec_x_t0_band, w_rec_off_deriv_band, p_rec_off_deriv_band, idx_w_rec, t_off
 
 #%%
 
