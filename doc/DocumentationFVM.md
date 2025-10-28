@@ -44,23 +44,23 @@ For the discretization, the following are important:
 The diffusion equation need to be integrated over one element $j$ via the following equation:
 
 ```{math}
-\frac{\partial}{\partial t} \int_{\Omega_j}  w(\mathbf{r}, t) dr - D \int_{\partial Omega} \nabla  w(\mathbf{r}, t) n dr = \int_{\Omega_j} P(t) delta(r-r_s )
+\frac{\partial}{\partial t} \int_{\Omega_j}  w(\mathbf{r}, t) dr - D \int_{\partial \Omega} \nabla  w(\mathbf{r}, t) n dr = \int_{\Omega_j} P(t) \delta(r-r_s )
 ```
 
 ### Boundary Conditions
 Additional equations are needed to describe the sound field at the boundaries. 
 The boundary condition above can be discretised for every face of a control volume being part of the boundary of the domain. 
 ```{math}
-- D \frac{\partial}{\partial n}  w_j(\mathbf{r}, t) = - h_{(b)j,k}  w_j
+- D \frac{\partial}{\partial n}  w_j(\mathbf{r}, t) = - h_{j,k}  w_j
 ```
-The term $n$ indicates the vector normal to the surface and the term $h_{(b)j,k}$ is dependent on the absorption coefficient $\alpha$ of the surface are of the $j$ control volume.
+The term $n$ indicates the vector normal to the surface and the term $h_{j,k}$ is a an exchange factor (Sabine, Eyring or Modified factor) dependent on the absorption coefficient $\alpha$ of the surface are of the $j$th control volume and on the speed of sound $c$. 
 
 ### Discretization
 The full discretised partial differential diffusion equation is:
 
 ```{math}
-\frac{V_j (w_{j}^{n+1} - w_{j}^{n-1})}{2 \Delta t} - D \sum_{k=1}^{N_f} \frac{S_{i,k}}{h_{j,k}} \Big(w_{k}^{n} - \frac{w_{j}^{n+1} - w_{j}^{n-1}}{2}\Big) \\
-- \sum_{k=1}^{N_{bf}} S_{i,k}  h_{(b)j,k} \Big(\frac{w_{j}^{n+1} - w_{j}^{n-1}}{2} \Big) = V_j P_{j}^{n}
+\frac{V_j (w_{j}^{n+1} - w_{j}^{n-1})}{2 \Delta t} - D \sum_{k=1}^{N_f} \frac{S_{j,k}}{h_{j,k}} \Big(w_{k}^{n} - \frac{w_{j}^{n+1} - w_{j}^{n-1}}{2}\Big) \\
+- \sum_{k=1}^{N_{bf}} S_{j,k}  h_{j,k} \Big(\frac{w_{j}^{n+1} - w_{j}^{n-1}}{2} \Big) = V_j P_{j}^{n}
 ```
 
 <!-- 
@@ -70,7 +70,7 @@ The full discretised partial differential diffusion equation is:
 ``` -->
 
 ## References
-- R. P. MuÃ±oz, Numerical modeling for urban sound propagation: developments in wave-based and energy based methods, PhD Thesis, Technische Universiteit Eindhoven, 2019.
+- R. P. Muñoz, Numerical modeling for urban sound propagation: developments in wave-based and energy based methods, PhD Thesis, Technische Universiteit Eindhoven, 2019.
 
-- M. VorlÃ¤nder, Auralization: fundamentals of acoustics, modelling, simulation, algorithms and acoustic virtual reality,  Springer 2008.
+- M. Vorländer, Auralization: fundamentals of acoustics, modelling, simulation, algorithms and acoustic virtual reality,  Springer 2008.
 

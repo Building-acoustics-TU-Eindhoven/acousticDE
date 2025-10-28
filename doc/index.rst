@@ -9,9 +9,9 @@ Welcome to Diffusion Equation's documentation
 The software is an open source new generation of room acoustics software for research, education and industry in acoustics.
 
 The software is based on the Acoustics Diffusion Equation Method for modeling of sound behaviour in complex geometrical spaces.
-The Diffusion Equation Method is used to understand the acoustics properties of the room and to obtain spatial distribution of acoustics energy over time in specific rooms.
+The Diffusion Equation Method is used to understand the acoustics properties of the room and to obtain spatial distribution of acoustics energy over time.
 The software is developed with two numerical methods: the Finite Different Method and the Finite Volume Method.
-Each method is distributed with its own Python code. The main application of the method is room and building acoustics, but in the future it could also lead to more applications.
+Each method is distributed with its own Python code. The main application of the method is room acoustics, but in the future it could also lead to more applications.
 
 
 .. toctree::
@@ -24,7 +24,7 @@ Each method is distributed with its own Python code. The main application of the
    :maxdepth: 2
    :caption: Software Use:
 
-   Finite Different Method Use.md
+   Finite Difference Method Use.md
    Finite Volume Method Use.md
    Auralization Use.md
 
@@ -49,7 +49,7 @@ Each method is distributed with its own Python code. The main application of the
    :maxdepth: 2
    :caption: Tutorials:
 
-   Finite Different Method Demo Tutorial.md
+   Finite Difference Method Demo Tutorial.md
    Finite Volume Method Demo Tutorial.md
 
 Indices and tables
