@@ -1372,8 +1372,8 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
 
     result_container = {}
     if json_file is not None:
-        with open(json_file, "r") as json_file:
-            result_container = json.load(json_file)
+        with open(json_file, "r") as f:
+            result_container = json.load(f)
 
     called_from_choras = False
     if "results" in result_container:
@@ -1468,7 +1468,10 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
 
             prev_percent_done = percentDone
 
-            
+        if check_should_cancel(json_file):
+            print("breaking out of outer loop")
+            break
+
         # percentDone = round(100*iBand/nBands);
         #if (percentDone > curPercent):
         # print(str(percentDone) + "% of main calculation completed")
