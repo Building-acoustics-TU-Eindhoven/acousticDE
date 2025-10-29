@@ -106,7 +106,7 @@ def abs_term(th,abscoeff_list,c0):
         Absx_array = np.append(Absx_array, Absx)
     return Absx_array
 
-def create_vgroups_names(file_path):
+def create_vgroups_names(file_path, should_initialise_gmsh=True):
     """
     Create a list of the material names assigned in SketchUp
 
@@ -120,7 +120,8 @@ def create_vgroups_names(file_path):
         vGroupsNames : list
             Names of the materials in the msh file (the material name are the same as the one assigned in the SketchUp file)
     """
-    gmsh.initialize() #Initialize msh file
+    if should_initialise_gmsh:
+        gmsh.initialize() #Initialize msh file
     mesh = gmsh.open(file_path) #open the file
     dim = -1 #dimensions of the entities, 0 for points, 1 for curves/edge/lines, 2 for surfaces, 3 for volumes, -1 for all the entities 
     tag = -1 #all the nodes of the room
