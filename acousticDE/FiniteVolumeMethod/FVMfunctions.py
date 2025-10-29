@@ -19,6 +19,7 @@ from math import ceil
 from math import log
 import gmsh
 import numpy as np
+import json
 
 from acousticDE.FiniteVolumeMethod.FunctionClarity import clarity
 from acousticDE.FiniteVolumeMethod.FunctionDefinition import definition
@@ -29,6 +30,19 @@ import logging
 
 # Create logger for this module
 logger = logging.getLogger(__name__)
+
+def check_should_cancel(json_file_path_in):
+    try:
+        if json_file_path_in is not None:
+            with open(json_file_path_in, "r") as json_file_to_check:
+                data = json.load(json_file_to_check)
+
+        # Update the specified field value
+        if "should_cancel" in data:
+            return data["should_cancel"]
+
+    except Exception as e:
+        print("check_should_cancel returned: " + str(e))
 
 #%%
 ###############################################################################
@@ -1290,7 +1304,7 @@ def beta_zero_freq_fun(boundary_areas, dt, Dx, interior_tet_sum, cell_volume):
 #MAIN CALCULATION - COMPUTING ENERGY DENSITY
 ############################################################################### 
 
-def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt, c0, m_atm, Dx, interior_tet, cell_volume, s, cl_tet_r_keys, total_weights_r, tcalc, cl_tet_s_keys, source1, total_weights_s, t, sourceon_time, rho):
+def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt, c0, m_atm, Dx, interior_tet, cell_volume, s, cl_tet_r_keys, total_weights_r, tcalc, cl_tet_s_keys, source1, total_weights_s, t, sourceon_time, rho, json_file=None):
     """
     Computation of energy density
 
@@ -1356,12 +1370,24 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
         t_off : array of floats
             Time array after the source is switched off
     """
+
+    result_container = {}
+    if json_file is not None:
+        with open(json_file, "r") as f:
+            result_container = json.load(f)
+
+    called_from_choras = False
+    if "results" in result_container:
+        called_from_choras = True
+
     w_new_band = []
     w_rec_band = []
     w_rec_off_band = []
     w_rec_off_deriv_band = []
     p_rec_off_deriv_band = []
-    
+
+    prev_percent_done = 0
+
     for iBand in range(nBands):
         
         w_new = np.zeros(len(voluEl)) #unknown w at new time level (n+1)
@@ -1422,10 +1448,34 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
             p_rec_off_deriv = np.append(p_rec_off_deriv,0) #add a zero in the last element of the array -> for derivation and to have the same length as previously
             
             #print(time_steps)
-            
-        percentDone = round(100*iBand/nBands);
+            percentDone = round(
+                100 * (iBand / nBands + steps / recording_steps * 1 / nBands)
+            )
+            if percentDone > prev_percent_done:
+
+                print(str(percentDone) + "% of main calculation completed")
+                if called_from_choras:
+                    
+                    # Checking whether the user has cancelled the simulation (only one time per percentage increase)
+                    if check_should_cancel(json_file):
+                        print("breaking out of inner loop")
+                        break
+
+                    result_container["results"][0]["percentage"] = percentDone
+                    with open(json_file, "w") as percentage_update:
+                        percentage_update.write(
+                            json.dumps(result_container, indent=4)
+                        )
+
+            prev_percent_done = percentDone
+
+        if check_should_cancel(json_file):
+            print("breaking out of outer loop")
+            break
+
+        # percentDone = round(100*iBand/nBands);
         #if (percentDone > curPercent):
-        print(str(percentDone) + "% of main calculation completed")
+        # print(str(percentDone) + "% of main calculation completed")
             #curPercent += 1;
     
         w_new_band.append(w_new)
