@@ -53,8 +53,12 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
     
     #file_path = os.path.join(script_dir, mesh_file) # Full path to the file
 
+    should_initialise_gmsh = False
+    if not gmsh.is_initialized():
+        should_initialise_gmsh = True
+
     #Calling function %create_vgroups_names%
-    vGroupsNames = create_vgroups_names(mesh_file_path)
+    vGroupsNames = create_vgroups_names(mesh_file_path, should_initialise_gmsh)
     
     with open(os.path.join(script_dir,inputs_path), "r") as f:
         inputs = json.load(f)
@@ -85,10 +89,6 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
     pRef = 2 * (10**-5) #Reference pressure in Pa
     rho = 1.21 #air density [kg.m^-3] at 20Â°C
     
-    should_initialise_gmsh = False
-    if not gmsh.is_initialized():
-        should_initialise_gmsh = True
-
     if should_initialise_gmsh:
         gmsh.initialize()
 
