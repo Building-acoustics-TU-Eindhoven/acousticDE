@@ -98,7 +98,7 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
     tag = -1
     
     #Calling function %create_vgroups_names%
-    vGroupsNames = create_vgroups_names(mesh_file_path)
+    vGroupsNames = create_vgroups_names(mesh_file_path, should_initialise_gmsh)
     
     #Calling function %number_freq%
     nBands, center_freq = number_freq(num_octave, fc_high, fc_low)
