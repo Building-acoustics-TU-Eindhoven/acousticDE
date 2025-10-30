@@ -270,6 +270,41 @@ def get_nodes_elem(dim,tag):
 
     return nodecoords, node_indices, bounEl, bounNode, voluEl, voluNode, belemNodes, velemNodes, boundaryEl_dict, volumeEl_dict
 
+#%%
+###############################################################################
+#CHECKING IF POINT SOURCE AND RECEIVER ARE INSIDE ROOM
+###############################################################################
+def point_inside_room(coordinate, nodecoords, velemNodes):
+    """
+    Checks if the point is inside the room volume
+
+    Parameters
+    ----------
+        coordinate : : list 
+            Coordinates of the source or receiver position
+        nodecoords : array of floats
+            The coordinates of each node in the mesh
+        velemNodes : array of int 
+            Indices of all the volumetric nodes per each colume element in the mesh
+
+    Returns
+    -------
+        False : bool
+            If the point is outside the room    
+    """
+    inside = False
+    for tet in velemNodes:  # each tetra = indices of its 4 corner nodes
+        tetra_coords = nodecoords[tet-1]
+        T = np.hstack((tetra_coords, np.ones((4,1))))
+        v = np.append(coordinate, 1)
+        bary = np.linalg.solve(T.T, v)
+        if np.all(bary >= -1e-12) and np.all(bary <= 1 + 1e-12):
+            inside = True
+            break
+    if not inside:
+        raise ValueError("Source or receiver points are outside the room mesh.")
+        return False
+
 
 #%%
 ###############################################################################

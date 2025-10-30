@@ -104,6 +104,10 @@ def test_run_fvm_sim():
     #Calling function %get_nodes_elem%
     nodecoords, node_indices, bounEl, bounNode, voluEl, voluNode, belemNodes, velemNodes, boundaryEl_dict, volumeEl_dict = get_nodes_elem(dim,tag)
     
+    #Calling function %point_inside_room%
+    warning_source = point_inside_room(coord_source, nodecoords, velemNodes)
+    warning_receiver = point_inside_room(coord_rec, nodecoords, velemNodes)
+    
     #Calling function %velem_volume_centre%
     cell_center, cell_volume = velem_volume_centre(volumeEl_dict, nodecoords, node_indices)
 
