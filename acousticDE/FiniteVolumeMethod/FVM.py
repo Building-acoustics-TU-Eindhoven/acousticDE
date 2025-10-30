@@ -53,8 +53,12 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
     
     #file_path = os.path.join(script_dir, mesh_file) # Full path to the file
 
+    should_initialise_gmsh = False
+    if not gmsh.is_initialized():
+        should_initialise_gmsh = True
+
     #Calling function %create_vgroups_names%
-    vGroupsNames = create_vgroups_names(mesh_file_path)
+    vGroupsNames = create_vgroups_names(mesh_file_path, should_initialise_gmsh)
     
     with open(os.path.join(script_dir,inputs_path), "r") as f:
         inputs = json.load(f)
@@ -85,14 +89,16 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
     pRef = 2 * (10**-5) #Reference pressure in Pa
     rho = 1.21 #air density [kg.m^-3] at 20Â°C
     
-    gmsh.initialize() #Initialize msh file
+    if should_initialise_gmsh:
+        gmsh.initialize()
+
     mesh = gmsh.open(mesh_file_path) #open the file
     
     dim = -1
     tag = -1
     
     #Calling function %create_vgroups_names%
-    vGroupsNames = create_vgroups_names(mesh_file_path)
+    vGroupsNames = create_vgroups_names(mesh_file_path, should_initialise_gmsh)
     
     #Calling function %number_freq%
     nBands, center_freq = number_freq(num_octave, fc_high, fc_low)
@@ -124,7 +130,8 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
     boundary_areas, total_boundArea = boundary_triang(velemNodes, nBands, bounNode, nodecoords, node_indices, triangle_face_absorption)
     print("Completed boundary tetrahedrons calculation. Starting main diffusion equation calculations over time and frequency...")
     
-    gmsh.finalize()
+    if should_initialise_gmsh:
+        gmsh.finalize()
     
     #Calling function %equiv_absorp%
     V,S,Eq_A = equiv_absorp_area(cell_volume, total_boundArea, surface_areas, absorption_coefficient_dict)
