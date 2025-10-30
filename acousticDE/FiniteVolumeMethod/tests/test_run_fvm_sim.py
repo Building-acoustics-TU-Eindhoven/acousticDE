@@ -104,6 +104,10 @@ def test_run_fvm_sim():
     #Calling function %get_nodes_elem%
     nodecoords, node_indices, bounEl, bounNode, voluEl, voluNode, belemNodes, velemNodes, boundaryEl_dict, volumeEl_dict = get_nodes_elem(dim,tag)
     
+    #Calling function %point_inside_room%
+    warning_source = point_inside_room(coord_source, nodecoords, velemNodes)
+    warning_receiver = point_inside_room(coord_rec, nodecoords, velemNodes)
+    
     #Calling function %velem_volume_centre%
     cell_center, cell_volume = velem_volume_centre(volumeEl_dict, nodecoords, node_indices)
 
@@ -174,7 +178,7 @@ def test_run_fvm_sim():
     print("100% of main calculation completed")
     
     #Calling function %freq_parameters%
-    w_rec_x_band, w_rec_y_band, spl_stat_x_band, spl_stat_y_band, spl_r_band, spl_r_off_band, spl_r_norm_band, sch_db_band, t30_band, edt_band, c80_band, d50_band, ts_band = freq_parameters(nBands, line_rec_x_idx_list, w_new_band, line_rec_y_idx_list, rho, c0, Ws, dist_x, dist_y, pRef, w_rec_band, w_rec_off_band, tcalc, t, idx_w_rec, V, Eq_A, S, dist_sr)
+    w_rec_x_band, w_rec_y_band, spl_stat_x_band, spl_stat_y_band, spl_r_band, spl_r_off_band, spl_r_norm_band, sch_db_band, spl_r_t0_band, t30_band, t20_band, edt_band, c80_band, d50_band, ts_band = freq_parameters(nBands, line_rec_x_idx_list, w_new_band, line_rec_y_idx_list, rho, c0, Ws, dist_x, dist_y, pRef, w_rec_band, w_rec_off_band, tcalc, t, idx_w_rec, V, Eq_A, S, dist_sr)
     
     et = time.time() #end time
     elapsed_time = et - st
