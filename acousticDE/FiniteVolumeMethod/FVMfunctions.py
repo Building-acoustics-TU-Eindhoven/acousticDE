@@ -1508,8 +1508,12 @@ def freq_parameters(nBands, line_rec_x_idx_list, w_new_band, line_rec_y_idx_list
             Sound pressure level over time at the receiver position per each frequency band normalised to its maximum level
         sch_db_band : list of arrays
             Energy density over time after the source is switched off at the receiver position per each frequency band
+        spl_r_t0_band : list
+            Energy density at the time when the source is switched off at the receiver position per each frequency band
         t30_band : array of floats
             Reverberation time T30 per each frequency band
+        t20_band : array of floats
+            Reverberation time T20 per each frequency band
         edt_band : array of floats
             Early decay time per each frequency band
         c80_band : array of floats 
@@ -1527,11 +1531,13 @@ def freq_parameters(nBands, line_rec_x_idx_list, w_new_band, line_rec_y_idx_list
     spl_r_off_band = []
     spl_r_norm_band = []
     t30_band = []
+    t20_band = []
     edt_band = []
     c80_band = []
     d50_band = []
     ts_band = []
     sch_db_band = []
+    spl_r_t0_band = []
     
     for iBand in range(nBands):
         
@@ -1552,6 +1558,8 @@ def freq_parameters(nBands, line_rec_x_idx_list, w_new_band, line_rec_y_idx_list
         spl_r = 10*np.log10(((abs(w_rec_band[iBand]))*rho*(c0**2))/(pRef**2)) #,where=press_r>0, sound pressure level at the receiver
         spl_r_off = 10*np.log10(((abs(w_rec_off_band[iBand]))*rho*(c0**2))/(pRef**2))
         
+        spl_r_t0 = spl_r_off[0]
+        
         spl_r_norm = 10*np.log10((((abs(w_rec_band[iBand]))*rho*(c0**2))/(pRef**2)) / np.max(((abs(w_rec_band[iBand]))*rho*(c0**2))/(pRef**2))) #normalised to maximum to 0dB
 
         schroeder = w_rec_off_band[iBand] #energy_r_rev_cum[::-1] #reverting the array again -> creating the schroder decay
@@ -1559,6 +1567,7 @@ def freq_parameters(nBands, line_rec_x_idx_list, w_new_band, line_rec_y_idx_list
         
         if tcalc == "decay":
             t30 = t60_decay(t, sch_db, idx_w_rec, rt='t30') #called function for calculation of t60 [s]
+            t20 = t60_decay(t, sch_db, idx_w_rec, rt='t20') #called function for calculation of t60 [s]
             edt = t60_decay(t, sch_db, idx_w_rec, rt='edt') #called function for calculation of edt [s]
             #Eq_A = 0.16*V/t60 #equivalent absorption area defined from the RT 
             c80 = clarity(t30, V, Eq_A[iBand], S, c0, dist_sr) #called function for calculation of c80 [dB]
@@ -1566,6 +1575,7 @@ def freq_parameters(nBands, line_rec_x_idx_list, w_new_band, line_rec_y_idx_list
             ts = centretime(t30, Eq_A[iBand], S) #called function for calculation of ts [ms]
             
             t30_band.append(t30)
+            t20_band.append(t20)
             edt_band.append(edt)
             c80_band.append(c80)
             d50_band.append(d50)
@@ -1579,15 +1589,17 @@ def freq_parameters(nBands, line_rec_x_idx_list, w_new_band, line_rec_y_idx_list
         spl_r_off_band.append(spl_r_off)
         spl_r_norm_band.append(spl_r_norm)
         sch_db_band.append(sch_db)
+        spl_r_t0_band.append(spl_r_t0)
     
     spl_r_off_band = np.array(spl_r_off_band)
     t30_band = np.array(t30_band)
+    t20_band = np.array(t20_band)
     edt_band = np.array(edt_band)
     c80_band = np.array(c80_band)
     d50_band = np.array(d50_band)
     ts_band = np.array(ts_band)
     
-    return w_rec_x_band, w_rec_y_band, spl_stat_x_band, spl_stat_y_band, spl_r_band, spl_r_off_band, spl_r_norm_band, sch_db_band, t30_band, edt_band, c80_band, d50_band, ts_band
+    return w_rec_x_band, w_rec_y_band, spl_stat_x_band, spl_stat_y_band, spl_r_band, spl_r_off_band, spl_r_norm_band, sch_db_band, spl_r_t0_band, t30_band, t20_band, edt_band, c80_band, d50_band, ts_band
 
 #%%
 ###############################################################################
