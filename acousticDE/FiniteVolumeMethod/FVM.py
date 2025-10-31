@@ -238,4 +238,4 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-results = run_fvm_sim(r"C:/Users/20225533/3x3x3.msh", r"C:/Users/20225533/simulation_fvm_inputs.json", r"C:/Users/20225533/absorption_coefficients.csv")
+# results = run_fvm_sim(r"C:/Users/20225533/3x3x3.msh", r"C:/Users/20225533/simulation_fvm_inputs.json", r"C:/Users/20225533/absorption_coefficients.csv")
