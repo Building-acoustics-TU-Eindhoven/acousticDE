@@ -156,7 +156,7 @@ def test_run_auralization_sim():
     # plt.tight_layout(rect=[0, 0, 1, 0.96])  # Adjust layout to fit suptitle
     # plt.show()
     
-    imp_filt_band, t_off_padded = filtered_envelope(filt_noise_band,p_rec_off_deriv_band_resampled, square_root, t_off_resampled, nBands) 
+    imp_filt_band= filtered_envelope(filt_noise_band,p_rec_off_deriv_band_resampled, square_root, t_off_resampled, nBands) 
     # #FIGURE 7
     # plt.figure(figsize=(12, 8))
     # plt.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)  #This line disables ticks on the main figure
