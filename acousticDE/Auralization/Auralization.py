@@ -156,14 +156,14 @@ def run_auralization(anechoic_signal_path,results_path):
     # plt.tight_layout(rect=[0, 0, 1, 0.96])  # Adjust layout to fit suptitle
     # plt.show()
     
-    imp_filt_band, t_off_padded = filtered_envelope(filt_noise_band,p_rec_off_deriv_band_resampled, square_root, t_off_resampled, nBands) 
+    imp_filt_band = filtered_envelope(filt_noise_band,p_rec_off_deriv_band_resampled, square_root, t_off_resampled, nBands) 
     # #FIGURE 7
     # plt.figure(figsize=(12, 8))
     # plt.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)  #This line disables ticks on the main figure
     # plt.title('Time domain of filtered impulse response per frequency band')
     # for fi in range(nBands):
     #     plt.subplot(nBands, 1, fi+1)    
-    #     plt.plot(t_off_padded, imp_filt_band[fi], label=f'{center_freq[fi]} Hz')
+    #     plt.plot(t_off_resampled, imp_filt_band[fi], label=f'{center_freq[fi]} Hz')
         
     #     plt.xlabel('Time [s]')
     #     plt.ylabel('Magnitude [dB]')
@@ -177,7 +177,7 @@ def run_auralization(anechoic_signal_path,results_path):
     # #FIGURE 8
     # # Plot impulse response in the time domain
     # plt.figure(figsize=(12, 8))
-    # plt.plot(t_off_padded, imp_tot)
+    # plt.plot(t_off_resampled, imp_tot)
     # plt.xlabel('Time [s]')
     # plt.ylabel('Magnitude [dB]')
     # plt.grid(True, which='both', linestyle='--', linewidth=0.5)

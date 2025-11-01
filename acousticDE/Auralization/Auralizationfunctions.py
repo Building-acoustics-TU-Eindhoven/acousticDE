@@ -270,16 +270,16 @@ def filtered_envelope(filt_noise_band,p_rec_off_deriv_band_resampled, square_roo
             Time array after the source is switched off padded to the legnth of the filt_noise_band   
     """
     #Padding the square-root to the same length as the filtered random noise
-    pad_length = filt_noise_band.shape[1]-p_rec_off_deriv_band_resampled.shape[1]
-    square_root_padded = np.pad(square_root, ((0,0),(0,pad_length)) ,mode='constant' )
-    t_off_padded = np.pad(t_off_resampled, ((0,pad_length)) ,mode='constant' )
+    # pad_length = filt_noise_band.shape[1]-p_rec_off_deriv_band_resampled.shape[1]
+    # square_root_padded = np.pad(square_root, ((0,0),(0,pad_length)) ,mode='constant' )
+    # t_off_padded = np.pad(t_off_resampled, ((0,pad_length)) ,mode='constant' )
     
     #Multiplication of SQUARE-ROOT of envelope with filtered random noise (FILTERED)
     imp_filt_band = []
     for fi in range(nBands):
-        imp_filt = square_root_padded[fi,:]*filt_noise_band[fi,:]
+        imp_filt = square_root[fi,:]*filt_noise_band[fi,:]
         imp_filt_band.append(imp_filt)
-    return imp_filt_band, t_off_padded
+    return imp_filt_band
 
 
 def generate_imp_resp(imp_filt_band):
