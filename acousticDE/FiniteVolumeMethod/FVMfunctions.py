@@ -1452,10 +1452,10 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
             #impulse = ((w_rec_off - w_rec_off_deriv))/dt#/(rho*c0**2) #This is the difference between the the energy density and the impulse response 
             
             #Envelope of Impulse response from the pressure
-            p_rec_off_deriv = p_rec_off #initialising an array of derivative equal to the w_rec_off -> this will be the impulse response after modifying it
-            p_rec_off_deriv = np.delete(p_rec_off_deriv, 0) #delete the first element of the array -> this means shifting the array one step before and therefore do a derivation
-            p_rec_off_deriv = np.append(p_rec_off_deriv,0) #add a zero in the last element of the array -> for derivation and to have the same length as previously
-            
+            p_rec_off_transf = p_rec_off #initialising an array of derivative equal to the w_rec_off -> this will be the impulse response after modifying it
+            p_rec_off_transf = np.delete(p_rec_off_transf, 0) #delete the first element of the array -> this means shifting the array one step before and therefore do a derivation
+            p_rec_off_transf = np.append(p_rec_off_transf,0) #add a zero in the last element of the array -> for derivation and to have the same length as previously
+            p_rec_off_deriv = ((p_rec_off - p_rec_off_transf))/dt
             #print(time_steps)
             
         percentDone = round(100*iBand/nBands);
