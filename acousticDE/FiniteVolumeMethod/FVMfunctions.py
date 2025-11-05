@@ -1664,15 +1664,21 @@ def freq_parameters(nBands, line_rec_x_idx_list, w_new_band, line_rec_y_idx_list
                 d50 = definition(t30, V, Eq_A[iBand], S, c0, dist_sr) #called function for calculation of d50 [%]
                 ts = centretime(t30, Eq_A[iBand], S) #called function for calculation of ts [ms]
                 
-                t30_band.append(t30)
-                t20_band.append(t20)
-                edt_band.append(edt)
-                c80_band.append(c80)
-                d50_band.append(d50)
-                ts_band.append(ts)
             except Exception as ex:
-                enough_IR_for_parameters = False
+                t30 = -1
+                t20 = -1
+                edt = -1
+                c80 = -1
+                d50 = -1
+                ts = -1
                 print("Not enough impulse response data to caluclate parameters.")
+
+            t30_band.append(t30)
+            t20_band.append(t20)
+            edt_band.append(edt)
+            c80_band.append(c80)
+            d50_band.append(d50)
+            ts_band.append(ts)
 
         w_rec_x_band.append(w_rec_x_end)
         w_rec_y_band.append(w_rec_y_end)
@@ -1682,8 +1688,7 @@ def freq_parameters(nBands, line_rec_x_idx_list, w_new_band, line_rec_y_idx_list
         spl_r_off_band.append(spl_r_off)
         spl_r_norm_band.append(spl_r_norm)
         sch_db_band.append(sch_db)
-        if enough_IR_for_parameters:
-            spl_r_t0_band.append(spl_r_t0)
+        spl_r_t0_band.append(spl_r_t0)
     
     spl_r_off_band = np.array(spl_r_off_band)
     t30_band = np.array(t30_band)
