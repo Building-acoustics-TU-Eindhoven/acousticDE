@@ -1482,6 +1482,7 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
             p_rec_off_transf = np.delete(p_rec_off_transf, 0) #delete the first element of the array -> this means shifting the array one step before and therefore do a derivation
             p_rec_off_transf = np.append(p_rec_off_transf,0) #add a zero in the last element of the array -> for derivation and to have the same length as previously
             p_rec_off_deriv = ((p_rec_off - p_rec_off_transf))/dt
+
             #print(time_steps)
             percentDone = round(
                 100 * (iBand / nBands + steps / recording_steps * 1 / nBands)
@@ -1517,6 +1518,7 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
         w_rec_band.append(w_rec)
         w_rec_off_band.append(w_rec_off)
         w_rec_off_deriv_band.append(w_rec_off_deriv)
+        p_rec_off_deriv[-1] = 0 # making sure that unfinished impulse responses are not causing a click at the end because of the derivative
         p_rec_off_deriv_band.append(p_rec_off_deriv)
         
         import warnings
@@ -1624,6 +1626,8 @@ def freq_parameters(nBands, line_rec_x_idx_list, w_new_band, line_rec_y_idx_list
     sch_db_band = []
     spl_r_t0_band = []
     
+    enough_IR_for_parameters = True
+
     for iBand in range(nBands):
         
         w_rec_x_end = np.array([])
@@ -1651,21 +1655,25 @@ def freq_parameters(nBands, line_rec_x_idx_list, w_new_band, line_rec_y_idx_list
         sch_db = 10.0 * np.log10(schroeder / max(schroeder)) #level of the array: schroeder decay
         
         if tcalc == "decay":
-            t30 = t60_decay(t, sch_db, idx_w_rec, rt='t30') #called function for calculation of t60 [s]
-            t20 = t60_decay(t, sch_db, idx_w_rec, rt='t20') #called function for calculation of t60 [s]
-            edt = t60_decay(t, sch_db, idx_w_rec, rt='edt') #called function for calculation of edt [s]
-            #Eq_A = 0.16*V/t60 #equivalent absorption area defined from the RT 
-            c80 = clarity(t30, V, Eq_A[iBand], S, c0, dist_sr) #called function for calculation of c80 [dB]
-            d50 = definition(t30, V, Eq_A[iBand], S, c0, dist_sr) #called function for calculation of d50 [%]
-            ts = centretime(t30, Eq_A[iBand], S) #called function for calculation of ts [ms]
-            
-            t30_band.append(t30)
-            t20_band.append(t20)
-            edt_band.append(edt)
-            c80_band.append(c80)
-            d50_band.append(d50)
-            ts_band.append(ts)
-            
+            try:
+                t30 = t60_decay(t, sch_db, idx_w_rec, rt='t30') #called function for calculation of t60 [s]
+                t20 = t60_decay(t, sch_db, idx_w_rec, rt='t20') #called function for calculation of t60 [s]
+                edt = t60_decay(t, sch_db, idx_w_rec, rt='edt') #called function for calculation of edt [s]
+                #Eq_A = 0.16*V/t60 #equivalent absorption area defined from the RT 
+                c80 = clarity(t30, V, Eq_A[iBand], S, c0, dist_sr) #called function for calculation of c80 [dB]
+                d50 = definition(t30, V, Eq_A[iBand], S, c0, dist_sr) #called function for calculation of d50 [%]
+                ts = centretime(t30, Eq_A[iBand], S) #called function for calculation of ts [ms]
+                
+                t30_band.append(t30)
+                t20_band.append(t20)
+                edt_band.append(edt)
+                c80_band.append(c80)
+                d50_band.append(d50)
+                ts_band.append(ts)
+            except Exception as ex:
+                enough_IR_for_parameters = False
+                print("Not enough impulse response data to caluclate parameters.")
+
         w_rec_x_band.append(w_rec_x_end)
         w_rec_y_band.append(w_rec_y_end)
         spl_stat_x_band.append(spl_stat_x)
@@ -1674,7 +1682,8 @@ def freq_parameters(nBands, line_rec_x_idx_list, w_new_band, line_rec_y_idx_list
         spl_r_off_band.append(spl_r_off)
         spl_r_norm_band.append(spl_r_norm)
         sch_db_band.append(sch_db)
-        spl_r_t0_band.append(spl_r_t0)
+        if enough_IR_for_parameters:
+            spl_r_t0_band.append(spl_r_t0)
     
     spl_r_off_band = np.array(spl_r_off_band)
     t30_band = np.array(t30_band)
