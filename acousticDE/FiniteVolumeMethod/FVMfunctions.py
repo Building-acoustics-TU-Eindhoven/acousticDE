@@ -830,7 +830,7 @@ def calculation_sourceon_time(nBands, V, Eq_A):
 #CALCULATION OF SABINE RT, TOTAL RECORDING TIME AND SOURCE ON TIME
 ###############################################################################
 
-def calculation_rec_time(sourceon_time, dt, edt=-1, ir_length=-1):
+def calculation_rec_time(sourceon_time, dt, edt=-1, ir_length=-1.0):
     """
     Calculation of the simulation time run
 
@@ -842,7 +842,7 @@ def calculation_rec_time(sourceon_time, dt, edt=-1, ir_length=-1):
             Time step
         edt : int, optional
             Early decay time. Defaults to -1.
-        ir_length : int, optional
+        ir_length : float, optional
             Impulse response length. Defaults to -1.
 
     Returns
@@ -854,11 +854,11 @@ def calculation_rec_time(sourceon_time, dt, edt=-1, ir_length=-1):
         recording_steps : int
             Number of time steps
     """
-    if edt == -1 & ir_length == -1:
+    if (edt == -1) and (ir_length == -1.0):
         recording_time = sourceon_time * 2
     elif edt != -1:
         recording_time = sourceon_time + (sourceon_time / 60 * edt)
-    elif ir_length != -1:
+    elif ir_length != -1.0:
         recording_time = sourceon_time + ir_length
 
     # Time resolution

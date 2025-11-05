@@ -72,6 +72,14 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
     dt = inputs["dt"]
     m_atm = inputs["m_atm"]
     th = inputs["th"]
+
+    if inputs["sim_len_type"] == "ir_length":
+        edt_to_use = -1.0
+        ir_length_to_use = inputs["de_ir_length"]
+    else:
+        edt_to_use = inputs["edt"]
+        ir_length_to_use = -1.0
+        
     #file_name = inputs["file_name"]
     #center_freq = inputs["center_freq"]
     #nBands = inputs["nBands"]
@@ -144,7 +152,7 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
     sourceon_time = calculation_sourceon_time(nBands, V, Eq_A)
     
     #Calling function %rec_time%
-    recording_time, t, recording_steps = calculation_rec_time(sourceon_time, dt, edt=-1, ir_length=-1)
+    recording_time, t, recording_steps = calculation_rec_time(sourceon_time, dt, edt=edt_to_use, ir_length=ir_length_to_use)
     
     #Calling function %diff_coeff%
     Dx, Dy, Dz = diffusion_coeff(V, S, c0)
