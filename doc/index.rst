@@ -52,6 +52,12 @@ Each method is distributed with its own Python code. The main application of the
    Finite Difference Method Demo Tutorial.md
    Finite Volume Method Demo Tutorial.md
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Example Gallery:
+
+   auto_examples/index
+
 Indices and tables
 ==================
 
