@@ -38,6 +38,7 @@ docs = [
     "sphinx",
     "sphinx-rtd-theme",
     "myst_parser",
+    "sphinx-gallery",
 ]
 
 dev = ["acousticDE[docs]"]
