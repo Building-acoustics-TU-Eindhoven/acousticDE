@@ -1,4 +1,7 @@
 """
+The Finite Volume Method
+========================
+
 Simulate the energy decay in a cuboid room using the Finite Volume diffusion
 equation.
 """
