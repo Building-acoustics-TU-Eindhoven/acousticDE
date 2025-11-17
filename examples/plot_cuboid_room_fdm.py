@@ -7,13 +7,17 @@ equation.
 """
 # %%
 import os
-import pandas as pd
 import json
 import numpy as np
 import matplotlib.pyplot as plt
 from acousticDE.FiniteDifferenceMethod.FDM import run_fdm_sim
+import tempfile
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
+# %%
+# Use a temporary directory for the example
+temp_dir = tempfile.TemporaryDirectory()
+# You can replace the temporary directory with a specific path if desired
+script_dir = temp_dir.name
 
 #%%
 ###############################################################################
@@ -56,3 +60,15 @@ times = result['t'][:len(result['t'])//2]
 energy_decay_curve = np.array(result['w_rec_off_band'])
 # %%
 
+plt.plot(
+    times, 
+    10*np.log10(np.abs(energy_decay_curve.T/np.max(energy_decay_curve))), 
+    label=[f'{int(fc)} Hz' for fc in result['center_freq']])
+plt.grid(True)
+plt.ylim([-65, 5])
+plt.ylabel('Energy Decay Curve (dB)')
+plt.xlabel('Time (s)')
+plt.legend()
+
+# %%
+temp_dir.cleanup()
