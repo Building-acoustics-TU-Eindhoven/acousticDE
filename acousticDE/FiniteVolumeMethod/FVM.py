@@ -51,8 +51,6 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
     
     st = time.time() #start time of calculation
     
-    #file_path = os.path.join(script_dir, mesh_file) # Full path to the file
-
     should_initialise_gmsh = False
     if not gmsh.is_initialized():
         should_initialise_gmsh = True
@@ -60,7 +58,7 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
     #Calling function %create_vgroups_names%
     vGroupsNames = create_vgroups_names(mesh_file_path, should_initialise_gmsh)
     
-    with open(os.path.join(script_dir,inputs_path), "r") as f:
+    with open(os.path.abspath(inputs_path), "r") as f:
         inputs = json.load(f)
          
     # Access input variables
@@ -229,5 +227,3 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
     print("Simulation finished successfully! Results in resultsFVM.pkl file")
     
     return results
-
-script_dir = os.path.dirname(os.path.abspath(__file__))
