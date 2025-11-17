@@ -15,7 +15,8 @@ from acousticDE.FiniteVolumeMethod.FVMfunctions import (
     create_vgroups_names, number_freq)
 from acousticDE.FiniteVolumeMethod.FVM import run_fvm_sim
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
+# script_dir = os.path.dirname(os.path.abspath(__file__))
+script_dir = '.'
 
 #%%
 ###############################################################################
