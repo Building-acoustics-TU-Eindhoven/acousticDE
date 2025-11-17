@@ -1,5 +1,8 @@
 """
-Simulate the energy decay in a cuboid room using the Finite Volume diffusion
+The Finite Difference Method
+============================
+
+Simulate the energy decay in a cuboid room using the Finite difference diffusion
 equation.
 """
 # %%
