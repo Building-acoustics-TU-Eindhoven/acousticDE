@@ -7,10 +7,9 @@ equation.
 """
 # %%
 import os
-import pandas as pd
-import json
-import numpy as np
 import matplotlib.pyplot as plt
+from IPython.display import Audio
+import numpy as np
 from acousticDE.Auralization.Auralization import run_auralization
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -20,3 +19,16 @@ results_fvm_path = os.path.join(script_dir, 'resultsFVM.pkl') # Full path to the
 # %%
 results = run_auralization(anechoic_file_path,results_fvm_path)
 
+# %%
+plt.figure()
+plt.plot(
+    results['t_conv'],
+    results['sh_conv_normalized']/np.max(np.abs(results['sh_conv_normalized'])))
+plt.grid(True)
+plt.ylabel('Normalized sound pressure (-)')
+plt.xlabel('Time (s)')
+plt.show()
+# %%
+Audio(
+    results['sh_conv_normalized']/np.max(np.abs(results['sh_conv_normalized'])), 
+    rate=results['fs'])
