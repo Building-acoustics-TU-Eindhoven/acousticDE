@@ -53,10 +53,13 @@ Each method is distributed with its own Python code. The main application of the
    Finite Volume Method Demo Tutorial.md
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Example Gallery:
+   :glob:
 
-   auto_examples/index
+   auto_examples/plot_cuboid_room_fvm
+   auto_examples/plot_cuboid_room_fdm
+   auto_examples/plot_cuboid_room_auralization
 
 Indices and tables
 ==================
