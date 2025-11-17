@@ -7,16 +7,18 @@ equation.
 """
 # %%
 import os
+import tempfile
 import pandas as pd
 import json
 import numpy as np
 import matplotlib.pyplot as plt
+import pooch
 from acousticDE.FiniteVolumeMethod.FVMfunctions import (
     create_vgroups_names, number_freq)
 from acousticDE.FiniteVolumeMethod.FVM import run_fvm_sim
 
-# script_dir = os.path.dirname(os.path.abspath(__file__))
-script_dir = '.'
+temp_dir = tempfile.TemporaryDirectory()
+script_dir = temp_dir.name
 
 #%%
 ###############################################################################
@@ -34,7 +36,13 @@ input_data = {
     "tcalc": "decay" #Choose "decay" if the objective is to calculate the energy decay of the room with all its energetic parameters; Choose "stationarysource" if the aim is to understand the behaviour of a room subject to a stationary source
 }
 
-file_path = os.path.join(script_dir, 'cube.msh') # Full path to the file
+# Download the mesh file from GitHub
+file_path = pooch.retrieve(
+    url="https://github.com/Building-acoustics-TU-Eindhoven/acousticDE/raw/refs/heads/master/examples/cube.msh",
+    known_hash=None,
+    path=script_dir,
+    fname="cube.msh"
+)
 
 #%%
 ###############################################################################
@@ -98,4 +106,4 @@ ax.set_ylabel("Energy Decay Curve (dB)")
 ax.set_xlabel("Time (s)")
 
 # %%
-
+temp_dir.cleanup()
