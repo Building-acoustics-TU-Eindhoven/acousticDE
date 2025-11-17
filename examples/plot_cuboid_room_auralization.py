@@ -6,15 +6,30 @@ Simulate the energy decay in a cuboid room using the Finite Volume diffusion
 equation.
 """
 # %%
-import os
+import tempfile
 import matplotlib.pyplot as plt
 from IPython.display import Audio
 import numpy as np
+import pooch
 from acousticDE.Auralization.Auralization import run_auralization
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
-anechoic_file_path = os.path.join(script_dir, 'anechoic_file.wav') # Full path to the file
-results_fvm_path = os.path.join(script_dir, 'resultsFVM.pkl') # Full path to the file
+tmp_dir = tempfile.TemporaryDirectory()
+script_dir = tmp_dir.name
+# %%
+
+anechoic_file_path = pooch.retrieve(
+    url="https://github.com/Building-acoustics-TU-Eindhoven/acousticDE/raw/refs/heads/master/examples/anechoic_file.wav",
+    known_hash=None,
+    path=script_dir,
+    fname="anechoic_file.wav"
+)
+
+results_fvm_path = pooch.retrieve(
+    url="https://github.com/Building-acoustics-TU-Eindhoven/acousticDE/raw/eba9989df48768f8c2574b4fd50c5d4d75bf0213/examples/resultsFVM.pkl",
+    known_hash=None,
+    path=script_dir,
+    fname="resultsFVM.pkl"
+)
 
 # %%
 results = run_auralization(anechoic_file_path,results_fvm_path)
