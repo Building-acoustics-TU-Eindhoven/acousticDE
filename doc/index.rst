@@ -45,12 +45,20 @@ Each method is distributed with its own Python code. The main application of the
    acousticDE/ReverberationFunctions
    acousticDE/Auralizationfunctions
    
-.. toctree::
-   :maxdepth: 2
-   :caption: Tutorials:
+..    :maxdepth: 2
+..    :caption: Tutorials:
 
-   Finite Difference Method Demo Tutorial.md
-   Finite Volume Method Demo Tutorial.md
+..    Finite Difference Method Demo Tutorial.md
+..    Finite Volume Method Demo Tutorial.md
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Example Gallery:
+   :glob:
+
+   auto_examples/plot_cuboid_room_fvm
+   auto_examples/plot_cuboid_room_fdm
+   auto_examples/plot_cuboid_room_auralization
 
 Indices and tables
 ==================
