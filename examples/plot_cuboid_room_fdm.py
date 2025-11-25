@@ -4,6 +4,9 @@ The Finite Difference Method
 
 Simulate the energy decay in a cuboid room using the Finite difference diffusion
 equation.
+
+As per text below, the inputs need to be prepared. For that, follow the instructions in
+`Finite Different Method Use Documentation — Inputs <https://building-acoustics-tu-eindhoven.github.io/acousticDE/Finite%20Difference%20Method%20Use.html#inputs>`_.
 """
 # %%
 import os
@@ -21,7 +24,7 @@ script_dir = temp_dir.name
 
 #%%
 ###############################################################################
-#GENERAL INPUT VARIABLES
+#General input variables
 ###############################################################################
 input_data = {
     "room_dim": [3.0, 3.0, 3.0],
@@ -45,7 +48,7 @@ input_data = {
 
 #%%
 ###############################################################################
-#SAVE TO JSON
+#Creation of json
 ###############################################################################
 fname_input_configuration = "cube_input_fdm.json"
 with open(os.path.join(script_dir, fname_input_configuration), "w") as f:
@@ -53,9 +56,22 @@ with open(os.path.join(script_dir, fname_input_configuration), "w") as f:
 
 print("Input file successfully created: cube_input_fdm.json")
 
-# %%
+#%%
+###############################################################################
+#Run simulation
+###############################################################################
 result = run_fdm_sim(os.path.join(script_dir, fname_input_configuration))
-# %%
+
+print("Reverberation time T30 band values:", result["t30_band"])
+print("Early decay time EDT band values:", result["edt_band"])
+print("Clarity C80 band values:", result["c80_band"])
+print("Definition D50 band values:", result["d50_band"])
+print("Centre time Ts band values:", result["ts_band"])
+
+#%%
+###############################################################################
+#Plotting Energy decay curve
+###############################################################################
 times = result['t'][:len(result['t'])//2]
 energy_decay_curve = np.array(result['w_rec_off_band'])
 # %%

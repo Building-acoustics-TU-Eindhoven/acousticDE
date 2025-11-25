@@ -4,7 +4,30 @@ The Finite Volume Method
 
 Simulate the energy decay in a cuboid room using the Finite Volume diffusion
 equation.
+
+After installing the package and reading the documentation in
+`Finite Volume Method Use Documentation <https://building-acoustics-tu-eindhoven.github.io/acousticDE/Finite%20Volume%20Method%20Use.html>`_,
+the software can be tested with the following files:
+
+- *cube.skp*
+- *cube.geo*
+- *cube.msh*
+
+These files can be found in the example folder.
+
+The file *cube.skp* is a SketchUp file containing a room with volume
+:math:`3 \\times 3 \\times 3 \ \mathrm{m}^3`.  
+The files *cube.geo* and *cube.msh* are both important files created and saved
+according to the instructions in
+`Finite Volume Method Use Documentation — Geometry & Mesh <https://building-acoustics-tu-eindhoven.github.io/acousticDE/Finite%20Volume%20Method%20Use.html#geometry-mesh>`_.
+
+The inputs need to be prepared. For that, follow the instructions in
+`Finite Volume Method Use Documentation — General Inputs <https://building-acoustics-tu-eindhoven.github.io/acousticDE/Finite%20Volume%20Method%20Use.html#general-inputs>`_.
+This will create a CSV file that you must fill with the absorption coefficients.
+
 """
+
+
 # %%
 import os
 import tempfile
@@ -22,7 +45,7 @@ script_dir = temp_dir.name
 
 #%%
 ###############################################################################
-#GENERAL INPUT VARIABLES
+#General input variables
 ###############################################################################
 input_data = {
     "coord_source": [1.5, 1.5, 1.5], #source coordinates x,y,z
@@ -46,7 +69,7 @@ file_path = pooch.retrieve(
 
 #%%
 ###############################################################################
-#SAVE TO JSON
+#Creation of json
 ###############################################################################
 fname_input_configuration = "cube_input_fvm.json"
 with open(os.path.join(script_dir, fname_input_configuration), "w") as f:
@@ -56,7 +79,7 @@ print("Input file successfully created: cube_input_fvm.json")
 
 #%%
 ###############################################################################
-#CREATION OF CSV FOR ABSORPTION
+#Creation of csv for absorption
 ###############################################################################
 
 # Get the names of the mesh's boundaries 
@@ -85,12 +108,27 @@ absorption_coefficients[absorption_coefficients.columns[1:]] = data
 
 absorption_coefficients.to_csv(csv_path, index=False)
 
-# %%
+
+#%%
+###############################################################################
+#Run simulation
+###############################################################################
 result = run_fvm_sim(
     file_path,
     os.path.join(script_dir, fname_input_configuration),
     csv_path)
-# %%
+
+
+print("Reverberation time T30 band values:", result["t30_band"])
+print("Early decay time EDT band values:", result["edt_band"])
+print("Clarity C80 band values:", result["c80_band"])
+print("Definition D50 band values:", result["d50_band"])
+print("Centre time Ts band values:", result["ts_band"])
+
+#%%
+###############################################################################
+#Plotting Energy decay curve
+###############################################################################
 times = result['t'][:len(result['t'])//2]
 energy_decay_curve = np.array(result['w_rec_off_band'])
 # %%
