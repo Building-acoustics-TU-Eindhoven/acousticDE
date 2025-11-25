@@ -38,6 +38,10 @@ docs = [
     "sphinx",
     "sphinx-rtd-theme",
     "myst_parser",
+    "sphinx-gallery",
+    "pooch",
+    "matplotlib",
+    "ipykernel",
 ]
 
 dev = ["acousticDE[docs]"]
