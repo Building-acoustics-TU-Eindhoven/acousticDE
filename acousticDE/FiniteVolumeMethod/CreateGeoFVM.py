@@ -61,6 +61,10 @@ def obj_to_gmsh_geo(obj_file, geo_file, volume_name="RoomVolume", tol=1e-8):
                 # If first token starts with 'Mesh', skip it
                 parts = [p for p in parts if not p.startswith("Mesh") and not p.startswith("Model")]
                 current_group = parts[0] if parts else "default"
+            elif line.startswith('usemtl'):  # Material-based grouping
+                parts = line.split()[1:]
+                # Materials also act as groups
+                current_group = parts[0] if parts else "default"
             elif line.startswith('f '): #checks for faces
                 parts = line.split()[1:]
                 # face vertex indices (OBJ format may include v/vt/vn)
