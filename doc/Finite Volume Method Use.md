@@ -9,6 +9,7 @@
 ## Usage & files
 To use the software, the following files are to be used:
 - _PrepareInputsFVM.py_: to create the json file with the inputs of the room;
+- _CreateGeoFVM.py_: to convert from obj file to geo file;
 - _CreateMeshFVM.py_: to create the volumetric mesh using Gmsh software;
 - _FVM.py_: it contains the main function run_fvm_sim to run the full simulation and calculate the acoustics parameters in the room.
 
@@ -26,7 +27,7 @@ The geometry for this method can be created using two workflows depending if Ske
 
 #### SketchUp Pro workflow
 
-In order to create a volumetric mesh of the room, the following steps need to be followed in SketchUp:
+In order to create a volumetric mesh of the room with SketchUp Pro, the following steps need to be followed:
 1. Create the 3D geometry of the room to simulate in SketchUp, setting the units of the geometry in meters;
 2. In the MeshKit extension banner in SketchUp software, set the active mesher to gmsh by clicking on the "edit configuration button" 
 ![editconfigurationbutton](images/editconfigurationbutton.png)
@@ -59,7 +60,7 @@ This script creates the volumetric mesh using Gmsh software. The method is suita
 
 
 #### Blender workflow
-In order to create a volumetric mesh of the room, the following steps need to be followed in Blender:
+In order to create a volumetric mesh of the room with Blender, the following steps need to be followed:
 1. Create the geometry. Remember to move the full geometry in the positive quadrant;
 2. On the top-right end side, you will see 'Scene Collection', then 'Collection' and 'Plane'. I would advise you to delete the 'Collection' by right-clicking and pressing 'Delete';
 3. Once you finish the geometry, go to the 'Material properties' tab on the bottom-right area with this icon ![Material properties](images/MaterialBlender.png)
