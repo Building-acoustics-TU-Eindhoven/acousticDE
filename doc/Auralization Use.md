@@ -16,7 +16,7 @@ The main software works with the following associated functions:
 ## Inputs
 
 ### Anechoic signal path
-The anechoic signal is a wav file needed for the convolution with the impulse response of the room in question. An anechoic file is a sound/speech recorder inside a fully absorbing chamber and therefore without any reflections. In the repository only one anechoic file is present; the user could decide to use their own. This anechoic file has been provided by (<u>[ODEON software](https://odeon.dk/downloads/odeon-zip-archives/#gsc.tab=0)).
+The anechoic signal is a wav file needed for the convolution with the impulse response of the room in question. An anechoic file is a sound/speech recorder inside a fully absorbing chamber and therefore without any reflections. In the repository only one anechoic file is present; the user could decide to use their own. This anechoic file has been provided by [ODEON software](https://odeon.dk/downloads/odeon-zip-archives/#gsc.tab=0).
 
 ### resultsFVM.pkl path
 The result file from the FVM calculation is needed to run the script. 
