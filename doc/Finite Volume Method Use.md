@@ -1,9 +1,9 @@
 ﻿# Finite Volume Method Use
 
 ## Requirements
-1. Set up acousticDE following the instructions in the installation section of the READme file. 
+1. Set up acousticDE following the instructions in the installation section of the [READme file](https://github.com/Building-acoustics-TU-Eindhoven/acousticDE). 
 2. Download and install Blender [Blender website](https://www.blender.org/download/) or SketchUp Pro from [SketchUp website](https://sketchup.trimble.com/en/plans-and-pricing);
-3. Download and install g-mesh from [G-msh website](https://gmsh.info/);
+3. Download and install Gmsh from [Gmsh website](https://gmsh.info/);
 4. If working with SketchUp Pro, then install the MeshKit extension of SketchUp from the extension warehouse.
 
 ## Usage & files
@@ -62,7 +62,7 @@ This script creates the volumetric mesh using Gmsh software. The method is suita
 #### Blender workflow
 In order to create a volumetric mesh of the room with Blender, the following steps need to be followed:
 1. Create the geometry. Remember to move the full geometry in the positive quadrant;
-2. On the top-right end side, you will see 'Scene Collection', then 'Collection' and 'Plane'. I would advise you to delete the 'Collection' by right-clicking and pressing 'Delete';
+2. On the top-right end side, you will see 'Scene Collection', then 'Collection' and 'Plane'. Rename the 'Plane' to for example 'RoomVolume';
 3. Once you finish the geometry, go to the 'Material properties' tab on the bottom-right area with this icon ![Material properties](images/MaterialBlender.png)
 4. In the 'Material Properties' tab, press the plus sign 'Add a material slot'
 5. Select 'New' and double click to put the material name, e.g., “carpet”; while on this window, it is best to change the 'Base Color' of the material, such that you can then later identify the surfaces with that specific material in the model.
