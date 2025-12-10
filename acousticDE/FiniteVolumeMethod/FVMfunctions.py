@@ -80,17 +80,16 @@ def abs_term(th,abscoeff_list,c0):
         Absx_array : array of floats
             Calculated absorption term for each absorption coefficient for each frequency
     """
-    Absx_array = np.array([])
-    for abs_coeff in abscoeff_list:
-        #print(abs_coeff)
-        if th == 1:
-            Absx = (c0*abs_coeff)/4 #Sabine
-        elif th == 2:
-            Absx = (c0*(-log(1-abs_coeff)))/4 #Eyring
-        elif th == 3:
-            Absx = (c0*abs_coeff)/(2*(2-abs_coeff)) #Modified by Xiang
-        Absx_array = np.append(Absx_array, Absx)
-    return Absx_array
+    Absx_array = np.array(abscoeff_list)
+
+    if th == 1:
+        Absx = (c0*Absx_array)/4 #Sabine
+    elif th == 2:
+        Absx = (c0*(-np.log(1-Absx_array)))/4 #Eyring
+    elif th == 3:
+        Absx = (c0*Absx_array)/(2*(2-Absx_array)) #Modified by Xiang
+
+    return Absx
 
 def create_vgroups_names(file_path, should_initialise_gmsh=True):
     """
