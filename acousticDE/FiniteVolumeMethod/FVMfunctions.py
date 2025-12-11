@@ -80,17 +80,16 @@ def abs_term(th,abscoeff_list,c0):
         Absx_array : array of floats
             Calculated absorption term for each absorption coefficient for each frequency
     """
-    Absx_array = np.array([])
-    for abs_coeff in abscoeff_list:
-        #print(abs_coeff)
-        if th == 1:
-            Absx = (c0*abs_coeff)/4 #Sabine
-        elif th == 2:
-            Absx = (c0*(-log(1-abs_coeff)))/4 #Eyring
-        elif th == 3:
-            Absx = (c0*abs_coeff)/(2*(2-abs_coeff)) #Modified by Xiang
-        Absx_array = np.append(Absx_array, Absx)
-    return Absx_array
+    Absx_array = np.array(abscoeff_list)
+
+    if th == 1:
+        Absx = (c0*Absx_array)/4 #Sabine
+    elif th == 2:
+        Absx = (c0*(-np.log(1-Absx_array)))/4 #Eyring
+    elif th == 3:
+        Absx = (c0*Absx_array)/(2*(2-Absx_array)) #Modified by Xiang
+
+    return Absx
 
 def create_vgroups_names(file_path, should_initialise_gmsh=True):
     """
@@ -1391,6 +1390,9 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
         t_off : array of floats
             Time array after the source is switched off
     """
+
+    rho_c0_2 = rho*c0**2
+
     w_new_band = []
     w_rec_band = []
     w_rec_off_band = []
@@ -1407,18 +1409,25 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
         
         w_rec = np.zeros(recording_steps) #energy density at the receiver
         
+        beta_zero_freq_MUL_DIV = (1-beta_zero_freq[iBand]) / (1+beta_zero_freq[iBand])
+        dt_c0_m_atm_2 = 2*dt*c0*m_atm / (1+beta_zero_freq[iBand])
+        dt_Dx_cell_volume = 2*dt*Dx/cell_volume/(1+beta_zero_freq[iBand])
+        dt_beta = 2*dt / (1+beta_zero_freq[iBand])
+
         #Computing w;
         for steps in range(0, recording_steps):
             #Compute w at inner mesh points
             #time_steps = steps*dt #total time for the calculation
             
             #Computing w_new (w at n+1 time step)
+
+            wTEMP = interior_tet@w
+
+            w_new = w_old * beta_zero_freq_MUL_DIV - \
+                (dt_c0_m_atm_2*w) + \
+                dt_Dx_cell_volume * (wTEMP) + \
+                dt_beta*s #The absorption term is part of beta_zero
                         
-            w_new = np.divide((np.multiply(w_old,(1-beta_zero_freq[iBand]))),(1+beta_zero_freq[iBand])) - \
-                np.divide((2*dt*c0*m_atm*w),(1+beta_zero_freq[iBand])) + \
-                    np.divide(np.divide((2*dt*Dx*(interior_tet@w)),cell_volume),(1+beta_zero_freq[iBand])) + \
-                        np.divide((2*dt*s),(1+beta_zero_freq[iBand])) #The absorption term is part of beta_zero
-                         
             #Update w before next step
             w_old = w #The w at n step becomes the w at n-1 step
             w = w_new #The w at n+1 step becomes the w at n step
@@ -1440,23 +1449,23 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
                 for tet_s in cl_tet_s_keys:
                      s[tet_s] = source1[0] *total_weights_s[tet_s]
             
-            idx_w_rec = np.argmin(np.abs(t - sourceon_time)) #index at which the t array is equal to the sourceon_time; I want the RT to calculate from when the source stops.
-            w_rec_off = w_rec[idx_w_rec:]
-            p_rec_off = (w_rec[idx_w_rec:])*rho*c0**2
-            t_off = t[idx_w_rec:]
-            
-            #Envelope of Impulse response from the energy density
-            w_rec_off_deriv = w_rec_off #initialising an array of derivative equal to the w_rec_off -> this will be the impulse response after modifying it
-            w_rec_off_deriv = np.delete(w_rec_off_deriv, 0) #delete the first element of the array -> this means shifting the array one step before and therefore do a derivation
-            w_rec_off_deriv = np.append(w_rec_off_deriv,0) #add a zero in the last element of the array -> for derivation and to have the same length as previously
-            #impulse = ((w_rec_off - w_rec_off_deriv))/dt#/(rho*c0**2) #This is the difference between the the energy density and the impulse response 
-            
-            #Envelope of Impulse response from the pressure
-            p_rec_off_transf = p_rec_off #initialising an array of derivative equal to the w_rec_off -> this will be the impulse response after modifying it
-            p_rec_off_transf = np.delete(p_rec_off_transf, 0) #delete the first element of the array -> this means shifting the array one step before and therefore do a derivation
-            p_rec_off_transf = np.append(p_rec_off_transf,0) #add a zero in the last element of the array -> for derivation and to have the same length as previously
-            p_rec_off_deriv = ((p_rec_off - p_rec_off_transf))/dt
-            #print(time_steps)
+            idx_w_rec = np.searchsorted(t, sourceon_time)
+            if idx_w_rec > 0 and (t[idx_w_rec] - sourceon_time) > (sourceon_time - t[idx_w_rec - 1]):
+                idx_w_rec -= 1
+
+            if steps == recording_steps-1 :
+                w_rec_off = w_rec[idx_w_rec:]
+                p_rec_off = w_rec_off * rho_c0_2
+                t_off = t[idx_w_rec:]
+
+                w_rec_off_deriv = w_rec_off[1:]
+                w_rec_off_deriv = np.pad(w_rec_off_deriv, (0, 1), 'constant')
+
+                #Envelope of Impulse response from the pressure
+                p_rec_off_transf = p_rec_off[1:]
+                p_rec_off_transf = np.pad(p_rec_off_transf, (0, 1), 'constant')
+                p_rec_off_deriv = ((p_rec_off - p_rec_off_transf))/dt
+                #print(time_steps)
             
         percentDone = round(100*iBand/nBands);
         #if (percentDone > curPercent):
