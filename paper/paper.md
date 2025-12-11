@@ -79,7 +79,7 @@ This method allows for an efficient way to calculate acoustics parameters in the
 
 # Acknowledgements and Fundings
 
-Ilaria Fichera acknowledges contributions from Silvin Willemsen, Marco Berzborn, Hassan Teymoori, Felipe Raymann, and Radovan Bast for their useful tips. 
+Ilaria Fichera acknowledges contributions from Silvin Willemsen, Marco Berzborn, Hassan Teymoori, Amin Livani, Felipe Raymann, and Radovan Bast for their useful tips. 
 
 This research is funded by the Dutch Research Council (NWO), Applied and Engineering Sciences (AES) under grant agreement No. 19430, with project title 'A new era of room acoustics simulation software: from academic advances to a sustainable open-source project and community'.
 
