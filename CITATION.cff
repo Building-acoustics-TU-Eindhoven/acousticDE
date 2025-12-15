@@ -1,0 +1,17 @@
+cff-version: 0.1.0
+message: "If you use this software, please cite it using these metadata."
+authors:
+  - family-names: Fichera
+    given-names: Ilaria
+    orcid: "https://orcid.org/0000-0002-0097-1486"
+  - family-names: Van hooricks
+    given-names: Cédric
+    orcid: "https://orcid.org/0000-0002-9671-5558"
+  - family-names: Hornikx
+    given-names: Maarten
+    orcid: "https://orcid.org/0000-0002-8343-6613"
+title: "acousticDE"
+date-released: 2025-12-24
+version: 0.1.0
+url: "https://github.com/Building-acoustics-TU-Eindhoven/acousticDE"
+#doi: 10.5281/zenodo.13619551
