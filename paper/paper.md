@@ -25,7 +25,7 @@ affiliations:
  - name: Department of Built Environment, Eindhoven University of Technology
    index: 1
    ror: 02c2kyt77
-date: 24 September 2025
+date: 24 December 2025
 bibliography: paper.bib
 
 ---
