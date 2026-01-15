@@ -19,7 +19,7 @@ from math import ceil
 from math import log
 import gmsh
 import numpy as np
-
+from scipy.sparse import csr_matrix
 from acousticDE.FiniteVolumeMethod.FunctionClarity import clarity
 from acousticDE.FiniteVolumeMethod.FunctionDefinition import definition
 from acousticDE.FiniteVolumeMethod.FunctionCentreTime import centretime
@@ -488,7 +488,6 @@ def get_neighbour_faces(voluEl):
 #CALCULATION OF INTERIOR TETRAHEDRONS
 ###############################################################################
 # Interior Tetrahedrons calculations
-
 def interior_tetra(voluEl,cell_center,velemNodes,nodecoords,node_indices):
     """
     Calculation of shared area divided shared distance between tetrahedrons
@@ -500,7 +499,7 @@ def interior_tetra(voluEl,cell_center,velemNodes,nodecoords,node_indices):
         cell_center : array of floats
             The coordinates of the center of the cell element per each element
         velemNodes : array of int 
-            Indices of all the volumetric nodes per each colume element in the mesh
+            Indices of all the volumetric nodes per each volume element in the mesh
         nodecoords : array of floats 
             The coordinates of each node in the mesh
         node_indices : dict 
@@ -513,39 +512,51 @@ def interior_tetra(voluEl,cell_center,velemNodes,nodecoords,node_indices):
         interior_tet_sum : array of floats
             Sum of interior_tet per columns
     """
-    interior_tet = np.zeros((len(voluEl), len(voluEl))) #initialization matrix of tetrahedron per tetrahedron
+    velemNodes = velemNodes - 1
+    nElem = velemNodes.shape[0]
+
+    ElemFacePatterns = np.array([
+        [1, 2, 3],
+        [0, 2, 3],
+        [0, 1, 3],
+        [0, 1, 2],
+    ], dtype=np.int64)
+
+    FaceIDs = np.sort(velemNodes[:, ElemFacePatterns].reshape(-1, 3), axis=1)
+
+    uniq_faces, invIDX, UniqNum = np.unique(
+        FaceIDs, axis=0, return_inverse=True, return_counts=True
+    )
+
+    CommonFaces = UniqNum == 2
+
+    CommonFaces = np.nonzero(CommonFaces[invIDX])[0]
+
+    sortCommonIDs = np.argsort(invIDX[CommonFaces], kind="mergesort")
+    CommonFaces = CommonFaces[sortCommonIDs]
+
+    TwoFaces = CommonFaces.reshape(-1, 2)
+
+    tetA = np.concatenate((TwoFaces[:, 0] // 4, TwoFaces[:, 1] // 4))
+    tetB = np.concatenate((TwoFaces[:, 1] // 4, TwoFaces[:, 0] // 4))
+
+    FaceNodes = FaceIDs[TwoFaces[:, 0]]
+
+    sc0 = nodecoords[FaceNodes[:, 0]]
+    sc1 = nodecoords[FaceNodes[:, 1]]
+    sc2 = nodecoords[FaceNodes[:, 2]]
+
+    shared_area = 0.5 * np.linalg.norm(np.cross(sc1 - sc0, sc2 - sc0), axis=1)
+
+    shared_distance = np.linalg.norm(cell_center[TwoFaces[:, 0] // 4] - cell_center[TwoFaces[:, 1] // 4], axis=1)
+
+    AreaDivDist = shared_area/shared_distance
+
+    AreaDivDist = np.concatenate((AreaDivDist, AreaDivDist))
+
+    interior_tet = csr_matrix((AreaDivDist, (tetA, tetB)), shape=(nElem, nElem))
     
-    for i in range(len(voluEl)): #for each tetrahedron, take its centre
-        #print(i)
-        cell_center_i = cell_center[i]
-        for j in range(len(voluEl)): #for each tetrahedron, take its centre
-            #cell_center_j = cell_center[j]
-            #print(j)
-            if i != j: #if the tetrahedrons are not the same one, then check if there are shared nodes in between the two tetrahedron i and j
-                shared_nodes = np.intersect1d(velemNodes[i], velemNodes[j])
-                #shared_nodes = []
-                #count = 0
-                #for node in velemNodes[i]: #for each node in tetrahedron i
-                #    print(node)
-                #    if node in velemNodes[j]: #if each node of the tetrahedron i is in nodelist of tetrahedron j
-                #        count += 1
-                #        shared_nodes.append(node) #append the node that it is in common
-                if len(shared_nodes) == 3: #after have done this for all the nodes, if the cound is 3 then calculate the shared area between the tetrahedrons
-                    sc0 = nodecoords[node_indices[shared_nodes[0]],:]
-                    #sc0 = gmsh.model.mesh.getNode(shared_nodes[0])[0] #coordinates of node 0
-                    sc1 = nodecoords[node_indices[shared_nodes[1]],:]
-                    #sc1 = gmsh.model.mesh.getNode(shared_nodes[1])[0] #coordinates of node 1
-                    sc2 = nodecoords[node_indices[shared_nodes[2]],:]
-                    #sc2 = gmsh.model.mesh.getNode(shared_nodes[2])[0] #coordinates of node 2
-                    shared_area = np.linalg.norm(np.cross(sc2-sc0,sc1-sc0))/2 #compute shared area
-                    shared_distance = np.linalg.norm(cell_center_i - cell_center[j])
-                        #sqrt((abs(cell_center_i[0] - cell_center_j[0]))**2 + (abs(cell_center_i[1] - cell_center_j[1]))**2 + (abs(cell_center_i[2] - cell_center_j[2]))**2) #distance between volume elements
-                    interior_tet[i, j] = shared_area/shared_distance #division between shared area and shared distance
-                else:
-                    shared_area = 0
-                    interior_tet[i, j] = shared_area
-    
-    interior_tet_sum = np.sum(interior_tet, axis=1) #sum of interior_tet per columns (so per i element)
+    interior_tet_sum = np.asarray(interior_tet.sum(axis=1)).ravel()
     
     return interior_tet, interior_tet_sum
 
@@ -684,11 +695,25 @@ def boundary_triang(velemNodes, nBands, bounNode, nodecoords, node_indices, tria
     """
     total_boundArea = 0  # initialization of total surface area of the room
     boundary_areas = []  # Initialize a list to store boundary_areas values for each tetrahedron
+
+    MapBoundSurf = {
+        frozenset(surface): idx 
+        for idx, surface in enumerate(bounNode)
+    }
+
     import itertools
+    import math
+
+    def tri_area_from_edges(v1, v2):
+        cx = v1[1]*v2[2] - v1[2]*v2[1]
+        cy = v1[2]*v2[0] - v1[0]*v2[2]
+        cz = v1[0]*v2[1] - v1[1]*v2[0]
+        return 0.5 * math.sqrt(cx*cx + cy*cy + cz*cz)
+
     face_areas = np.zeros(
         len(velemNodes))  # Per each tetrahedron, if there is a face that is on the boundary, include the area, otehrwise zero
     for idx, element in enumerate(velemNodes):  # for index and element in the number of tetrahedrons
-        # if idx == 491:
+        idx = int(idx)
         tetrahedron_boundary_areas = 0  # initialization tetrahedron face on boundary*its absorption term
         total_tetrahedron_boundary_areas = np.zeros(nBands)  # initialization total tetrahedron face on boundary*its absorption term if there are more than one face in the tetrahedron that is on the boundary
         # print(idx)
@@ -696,47 +721,37 @@ def boundary_triang(velemNodes, nBands, bounNode, nodecoords, node_indices, tria
         # Check if the nodes are in any order in bounNode
         is_boundary = False  # variable to say that at the beginning the face in not on a boundary
         for nodes in node_combinations:  # for each node in each combination
-            for surface_idx, surface in enumerate(bounNode):  # for index and surface in the number of nodes
-                surface_set = sorted(set(surface))  # creates a set of the surface nodes
-                surface_set_idx = surface_idx
-                nodes_set = sorted(set(nodes))  # create a set of the node combination of the tetrahedron into consideration
-                # surface_list = list(surface)
-                if nodes_set == surface_set:  # if these are equal, it means that the tetrahedron into consideration has a surface in the boundary and therefore is_boundary gets the value of True.
-                    # print(surface_set)
-                    # print(surface_list)
-                    is_boundary = True
-                    if is_boundary:  # if the surface is at the boundary, then take the coordinates of each vertix
-                        # Convert the vertices to NumPy arrays for vector operations
-                        bc0 = nodecoords[node_indices[nodes[0]], :]
-                        bc1 = nodecoords[node_indices[nodes[1]], :]
-                        bc2 = nodecoords[node_indices[nodes[2]], :]
+            face_key = frozenset(nodes)
+            surface_idx = MapBoundSurf.get(face_key)
+            if surface_idx is not None:
+                # Convert the vertices to NumPy arrays for vector operations
+                bc0 = nodecoords[node_indices[nodes[0]], :]
+                bc1 = nodecoords[node_indices[nodes[1]], :]
+                bc2 = nodecoords[node_indices[nodes[2]], :]
 
-                        # bc0 = gmsh.model.mesh.getNode(nodes[0])[0] #coordinates of vertix 0
-                        # bc1 = gmsh.model.mesh.getNode(nodes[1])[0] #coordinates of vertix 1
-                        # bc2 = gmsh.model.mesh.getNode(nodes[2])[0] #coordinates of vertix 2
+                v1 = bc1 - bc0
+                v2 = bc2 - bc0
 
-                        face_area = 0.5 * np.linalg.norm(np.cross(bc1 - bc0, bc2 - bc0))  # Compute the area using half of the cross product's magnitude
-                        # print(face_area)
+                face_area = tri_area_from_edges(v1, v2)
+                
+                total_boundArea += face_area
+                
+                if face_area > 0:
+                    # Use the index to access the corresponding absorption area
+                    face_absorption_product = face_area * triangle_face_absorption[surface_idx]  # calculate the product between the area*the correspondent absorption term
+                    # print(face_absorption_product)
 
-                        face_areas[idx] = face_area  # area of the surface that is on boundary per each tetrahedron
-                        total_boundArea += face_area  # add to the total boundary area
+                    tetrahedron_boundary_areas += face_absorption_product  # add the calculation to the tetrahedron correspondent
 
-                        if face_area > 0:
-                            # Use the index to access the corresponding absorption area
-                            face_absorption_product = face_area * triangle_face_absorption[surface_set_idx]  # calculate the product between the area*the correspondent absorption term
-                            # print(face_absorption_product)
-
-                            tetrahedron_boundary_areas += face_absorption_product  # add the calculation to the tetrahedron correspondent
-
-                            total_tetrahedron_boundary_areas[:] = tetrahedron_boundary_areas  # if there are multiple surfaces on the boundary per each tetrahedron, then add also the second and the third one
+                    total_tetrahedron_boundary_areas[:] = tetrahedron_boundary_areas  # if there are multiple surfaces on the boundary per each tetrahedron, then add also the second and the third one
 
         boundary_areas.append(np.array(
             total_tetrahedron_boundary_areas))  # Append the total boundary_areas for the tetrahedron to the list
     # print(total_tetrahedron_boundary_areas)
     boundary_areas = np.array(boundary_areas)
     boundary_areas = boundary_areas.T
-    return boundary_areas, total_boundArea
 
+    return boundary_areas, total_boundArea
 
 #%%
 ###############################################################################
