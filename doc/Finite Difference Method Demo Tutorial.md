@@ -1,6 +1,22 @@
 ﻿# Finite Difference Method Demo Tutorial
 
-Test the software with the following inputs (Navarro et al., 2012):
+After installing the package and reading the documentation in [Finite Difference Method Use Documentation](https://building-acoustics-tu-eindhoven.github.io/acousticDE/Finite%20Difference%20Method%20Use.html), the software can be tested.
+
+The inputs need to be prepared. For that, follow the instruction in [Finite Difference Method Use Documentation, Paragraph 'Inputs'](https://building-acoustics-tu-eindhoven.github.io/acousticDE/Finite%20Difference%20Method%20Use.html#inputs).
+
+Once the files is created (json file), the main acoustics simulation can be run in cmd window with the following commands:
+
+```
+python
+>>> import acousticDE
+>>> from acousticDE.FiniteDifferenceMethod.FVM import run_fdm_sim
+>>> results = run_fdm_sim('C:\....\input_fvm.json')
+```
+
+The software should provide results of Sound Pressure Levels at the receiver position, Reverberation time, Clarity and other energetic parameters in a pickle file called _resultsFDM.pkl_.
+
+
+If using the following input data (Navarro et al., 2012):
 
 ```
 input_data = {
@@ -24,7 +40,7 @@ input_data = {
 }
 ```
 
-Test if the software provides the following results:
+test if the software provides the following results:
 
 - Reverberation time (RT): [1.22, 1.22, 1.22, 1.22, 1.22] s; 
 - Early Decay Time (EDT): [1.22, 1.22, 1.22, 1.22, 1.22] s;
