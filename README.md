@@ -17,7 +17,36 @@ Use pip to install acousticDE
 pip install acousticDE
 ```
 
-To run the codes/functions, check the [documentation](https://building-acoustics-tu-eindhoven.github.io/acousticDE/) below depending on the method you want to use and check the Tutorial sections of the documentation.
+Once installed, in cmd window, use the following commands:
+
+```bash 
+python
+
+import acousticDE
+```
+
+To run FVM, continue with:
+```bash 
+from acousticDE.FiniteVolumeMethod.FVM import run_fvm_sim
+
+results = run_fvm_sim('C:\....\mesh.msh','C:\....\mesh_input_fvm.json','C:\....\absorption_coefficients.csv')
+```
+
+To run FDM, continue with:
+```bash 
+from acousticDE.FiniteDifferenceMethod.FDM import run_fdm_sim
+
+results = run_fdm_sim('C:\....\mesh_input_fdm.json')
+```
+
+To run Auralization, continue with:
+```bash 
+from acousticDE.Auralization.Auralization import run_auralization_sim
+
+results = run_auralization_sim('C:\....\anechoic_file.wav','C:\....\resultsFVM.pkl')
+```
+
+To run the codes/functions, check the [documentation](https://building-acoustics-tu-eindhoven.github.io/acousticDE/) depending on the method you want to use, create the files needed for the specific function and check the Tutorial sections of the documentation.
 
 ## Usage & Documentation
 The [documentation](https://building-acoustics-tu-eindhoven.github.io/acousticDE/) is created to help to use and develop acousticDE effectively. To use acousticDE, please refer to the Tutorial section of the [documentation](https://building-acoustics-tu-eindhoven.github.io/acousticDE/). In addition, the documentation gives an introduction of the package for both FDM and FVM.
