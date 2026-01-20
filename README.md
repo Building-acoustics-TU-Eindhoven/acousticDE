@@ -14,7 +14,7 @@ The package acousticDE is formed by three subfolders:
 Use pip to install acousticDE
 
 ```bash 
-pip install acousticDE
+pip install acousticDE==0.1.0
 ```
 
 Once installed, in cmd window, use the following commands:
