@@ -59,7 +59,7 @@ The diffusion equation method aims to estimate how acoustic energy is distribute
 The diffusion equation together with its boundary condition reads as follows:
 
 $$
-\frac{\partial{w(\mathbf{r}, t)}} {\partial{t}} = - D \boldsymbol{\nabla}^2 w(\mathbf{r}, t) - m c w(\mathbf{r}, t) + q(\mathbf{r}, t) \\
+\frac{\partial{w(\mathbf{r}, t)}} {\partial{t}} = - D \boldsymbol{\nabla}^2 w(\mathbf{r}, t) - m c w(\mathbf{r}, t) + q(\mathbf{r}, t) 
 $$
 
 $$
