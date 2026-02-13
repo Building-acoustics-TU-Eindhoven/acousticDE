@@ -11,7 +11,7 @@ authors:
   - name: Ilaria Fichera
     orcid: 0000-0002-0097-1486
     corresponding: true
-  - name: Cédric Van hoorickx
+  - name: C{\'e}dric Van hoorickx
     orcid: 0000-0002-9671-5558
   - name: Maarten Hornikx
     orcid: 0000-0002-8343-6613
