@@ -1,5 +1,5 @@
 ---
-title: "\`acousticDE\`: A diffusion equation model package for room acoustics simulations"
+title: "`acousticDE`: A diffusion equation model package for room acoustics simulations"
 tags:
   - python
   - diffusion equation
