@@ -1,4 +1,4 @@
-﻿---
+---
 title: '`acousticDE`: A diffusion equation model package for room acoustics simulations'
 tags:
   - python
@@ -10,24 +10,17 @@ tags:
 authors:
   - name: Ilaria Fichera
     orcid: 0000-0002-0097-1486
-    #equal-contrib: true
     corresponding: true
-    #affiliation: "1" # (Multiple affiliations must be quoted)
   - name: Cédric Van hoorickx
     orcid: 0000-0002-9671-5558
-    #equal-contrib: false # (This is how you can denote equal contributions between multiple authors)
-    #affiliation: "1" 
   - name: Maarten Hornikx
     orcid: 0000-0002-8343-6613
-    #equal-contrib: false # (This is how you can denote equal contributions between multiple authors)
-    #affiliation: "1" 
 affiliations:
  - name: Department of Built Environment, Eindhoven University of Technology
    index: 1
    ror: 02c2kyt77
 date: 2026-02-13
 bibliography: paper.bib
-
 ---
 
 # Summary
