@@ -86,11 +86,17 @@ where $\rho$ is the density of air in [kg/m$^3$] and $p_{\text{ref}}$ is equal t
 
 This method allows to calculate acoustics parameters in the room (e.g. sound pressure level and reverberation time). Example results are shown in the figure below.
 
-| ![](figures/SPLdecay.png) | ![](figures/T30Freq.png) |
-|:---------------------------:|:---------------------------:|
-| (a) | (b) |
+![](figures/spldecay.png)
+![](figures/t30freq.png)
 
-: Example of simulation results: (a) Sound pressure level decay, (b) Reverberation time T_{30} over the frequency.
+**(a)** SPL decay                                        **(b)** T30 vs frequency
+
+
+<!-- | ![](figures/SPLdecay.png) | ![](figures/T30Freq.png) |
+|:---------------------------:|:---------------------------:|
+| (a) | (b) | -->
+
+<!-- : Example of simulation results: (a) Sound pressure level decay, (b) Reverberation time T_{30} over the frequency. -->
 
 
 # Software design
