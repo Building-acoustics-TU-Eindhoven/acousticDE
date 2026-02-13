@@ -16,9 +16,9 @@ authors:
   - name: Maarten Hornikx
     orcid: 0000-0002-8343-6613
 affiliations:
- - name: Department of Built Environment, Eindhoven University of Technology
-   index: 1
-   ror: 02c2kyt77
+  - name: Department of Built Environment, Eindhoven University of Technology
+    index: 1
+    ror: 02c2kyt77
 date: 13 February 2026
 bibliography: paper.bib
 ---
