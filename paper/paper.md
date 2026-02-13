@@ -19,7 +19,7 @@ affiliations:
  - name: Department of Built Environment, Eindhoven University of Technology
    index: 1
    ror: 02c2kyt77
-date: 2026-02-13
+date: 13 February 2026
 bibliography: paper.bib
 ---
 
@@ -114,7 +114,7 @@ The software can be used as a standalone simulation tool or as a back-end acoust
 
 # AI usage disclosure
 
-No AI was used for the creation of `acousticDE`.
+No generative AI tools were used in the development of this software, the writing of this manuscript, or the preparation of supporting materials.
 
 # Acknowledgements and Fundings
 
