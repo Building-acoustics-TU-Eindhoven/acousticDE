@@ -14,10 +14,10 @@ jobs:
         uses: openjournals/openjournals-draft-action@v1.0
         with:
           journal: joss
-          paper-path: paper.md
+          paper-path: paper/paper.md
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: paper
-          path: paper.pdf
+          path: paper/paper.pdf
