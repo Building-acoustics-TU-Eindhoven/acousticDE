@@ -1,21 +1,23 @@
-name: Build JOSS PDF
-
-on:
-  push:
-    paths:
-      - paper.md
-      - paper/**
+name: Draft PDF
+on: [push]
 
 jobs:
-  build:
+  paper:
     runs-on: ubuntu-latest
+    name: Paper Draft
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run Inara to build PDF
-        uses: docker://openjournals/inara:latest
+      - name: Build draft PDF
+        uses: openjournals/openjournals-draft-action@v1.0
         with:
-          args: -o pdf paper/paper.md
+          journal: joss
+          paper-path: paper.md
 
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper
+          path: paper.pdf
