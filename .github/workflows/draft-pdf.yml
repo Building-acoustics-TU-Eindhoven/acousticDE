@@ -10,17 +10,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build draft PDF
-        id: build
         uses: openjournals/openjournals-draft-action@master
         with:
           journal: joss
           paper-path: paper/paper.md
-          args: "-o pdf --verbose --dump-args"
-
-      - name: Copy LaTeX temp directory
-        run: |
-          mkdir -p latex-debug
-          cp -r /tmp/tex2pdf* latex-debug || true
+          args: "-o pdf --verbose --keep-tex"
 
       - name: Upload PDF
         uses: actions/upload-artifact@v4
@@ -32,4 +26,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: latex-debug
-          path: latex-debug
+          path: paper/*.tex
+
+
