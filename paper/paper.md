@@ -120,6 +120,6 @@ No generative AI tools were used in the development of this software, the writin
 
 The authors acknowledges contributions from Silvin Willemsen, Marco Berzborn, Hassan Teymoori, Amin Livani, Felipe Raymann, and Radovan Bast.
 
-This research is funded by the Dutch Research Council (NWO), Applied and Engineering Sciences (AES) under grant agreement No. 19430, with project title 'A new era of room acoustics simulation software: from academic advances to a sustainable open-source project and community'.
+This research is funded by the Dutch Research Council (NWO), Applied and Engineering Sciences (AES) under grant agreement No. 19430, with project title "A new era of room acoustics simulation software: from academic advances to a sustainable open-source project and community".
 
 # References
