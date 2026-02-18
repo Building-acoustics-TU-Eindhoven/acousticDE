@@ -10,7 +10,6 @@ tags:
 authors:
   - name: Ilaria Fichera
     orcid: 0000-0002-0097-1486
-    corresponding: true
   - name: 'Cedric Van hoorickx'
     orcid: 0000-0002-9671-5558
   - name: Maarten Hornikx
