@@ -6,6 +6,9 @@ Created on Wed Aug  2 16:12:40 2023
 """
 
 import time
+import pickle
+import numpy as np
+from pathlib import Path
 
 from acousticDE.FiniteDifferenceMethod.FunctionClarity import clarity
 from acousticDE.FiniteDifferenceMethod.FunctionDefinition import definition
@@ -35,14 +38,14 @@ def test_run_fdm_sim():
     
     inputs = {
         "room_dim": [3.0, 3.0, 3.0],
-        "coord_source": [1.0, 1.0, 1.0], #source coordinates x,y,z
-        "coord_rec": [2.0, 2.0, 2.0], #rec coordinates x,y,z
-        "alpha_1": [0.80, 0.82, 0.84, 0.86, 0.88, 0.90], #Absorption coefficient for Surface1 - Floor
-        "alpha_2": [0.80, 0.82, 0.84, 0.86, 0.88, 0.90], #Absorption coefficient for Surface2 - Ceiling
-        "alpha_3": [0.80, 0.82, 0.84, 0.86, 0.88, 0.90], #Absorption coefficient for Surface3 - Wall Front
-        "alpha_4": [0.80, 0.82, 0.84, 0.86, 0.88, 0.90], #Absorption coefficient for Surface4 - Wall Back
-        "alpha_5": [0.80, 0.82, 0.84, 0.86, 0.88, 0.90], #Absorption coefficient for Surface5 - Wall Left
-        "alpha_6": [0.80, 0.82, 0.84, 0.86, 0.88, 0.90], #Absorption coefficient for Surface6 - Wall Right
+        "coord_source": [1.5, 1.5, 1.5], #source coordinates x,y,z
+        "coord_rec": [2.0, 1.5, 1.5], #rec coordinates x,y,z
+        "alpha_1": [0.10, 0.15, 0.20, 0.25, 0.25, 0.30], #Absorption coefficient for Surface1 - Floor
+        "alpha_2": [0.07, 0.10, 0.13, 0.15, 0.15, 0.16], #Absorption coefficient for Surface2 - Ceiling
+        "alpha_3": [0.08, 0.09, 0.11, 0.15, 0.14, 0.14], #Absorption coefficient for Surface3 - Wall Front
+        "alpha_4": [0.08, 0.09, 0.11, 0.15, 0.14, 0.14], #Absorption coefficient for Surface4 - Wall Back
+        "alpha_5": [0.08, 0.09, 0.11, 0.15, 0.14, 0.14], #Absorption coefficient for Surface5 - Wall Left
+        "alpha_6": [0.08, 0.09, 0.11, 0.15, 0.14, 0.14], #Absorption coefficient for Surface6 - Wall Right
         "fc_low": 125, #lowest frequency
         "fc_high": 4000, #highest frequency
         "num_octave": 1, # 1 or 3 depending on how many octave you want
@@ -154,3 +157,48 @@ def test_run_fdm_sim():
 
 results = test_run_fdm_sim()  
 
+
+
+
+def compare_values(new, expected, rtol=1e-6, atol=1e-8, path="root"):
+    if isinstance(expected, np.ndarray): #for arrays
+        np.testing.assert_allclose(new, expected, rtol=rtol, atol=atol)
+    
+    elif isinstance(expected, dict): #for dictionaries
+        assert isinstance(new, dict), f"{path}: expected dict"
+        for key in expected:
+            assert key in new, f"{path}: missing key {key}"
+            compare_values(new[key], expected[key], rtol, atol, path=f"{path}.{key}")
+
+    elif isinstance(expected, (list, tuple)): #for list and tuples
+        assert len(new) == len(expected), f"{path}: length mismatch"
+        for i, (n, e) in enumerate(zip(new, expected)):
+            compare_values(n, e, rtol, atol, path=f"{path}[{i}]")
+    
+    else: 
+        assert new == expected, f"{path}: {new} != {expected}"
+        
+        
+    
+
+data_dir = Path(__file__).parent / "test_data"
+
+with open(data_dir / "StateVariablesFDM.pkl", "rb") as f:
+    expected_data = pickle.load(f)
+    
+new_data = results
+
+variables_to_check = [
+    "c80_band",
+    "d50_band",
+    "edt_band",
+    "spl_new_band",
+    "spl_r_off_band",
+    "t30_band",
+    "ts_band",
+    "w_new_band",
+    "w_rec_off_band",
+]
+
+for var in variables_to_check:
+    compare_values(new_data[var], expected_data[var], path=var)
