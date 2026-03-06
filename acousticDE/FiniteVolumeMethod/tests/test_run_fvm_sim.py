@@ -18,7 +18,9 @@ from math import log
 import gmsh
 import numpy as np
 import json
+import pickle
 import pandas as pd
+from pathlib import Path
 from acousticDE.FiniteVolumeMethod.FunctionClarity import clarity
 from acousticDE.FiniteVolumeMethod.FunctionDefinition import definition
 from acousticDE.FiniteVolumeMethod.FunctionCentreTime import centretime
@@ -46,24 +48,30 @@ def test_run_fvm_sim():
     
     inputs = {
         #"file_name": "test_mesh.msh", #name of the mesh file
-        "coord_source": [0.5, 0.5, 1.0], #source coordinates x,y,z
-        "coord_rec": [2.0, 0.5, 1.0], #rec coordinates x,y,z
+        "coord_source": [1.5, 1.5, 1.5], #source coordinates x,y,z
+        "coord_rec": [2.0, 1.5, 1.5], #rec coordinates x,y,z
         "fc_low": 125, #lowest frequency
-        "fc_high": 4000, #highest frequency
+        "fc_high": 2000, #highest frequency
         "num_octave": 1, # 1 or 3 depending on how many octave you want
         "dt": 1/20000, #time discretization
         "m_atm": 0, #air absorption coefficient [1/m]
         "th": 3, #int(input("Enter type Absortion conditions (option 1,2,3):")) # options Sabine (th=1), Eyring (th=2) and modified by Xiang (th=3)
-        "center_freq": [125,250,500,1000,2000,4000],
-        "nBands": 6,
-        "x_frequencies": 5,
-        "vGroupsNames": [[1,8,'default'],[2,1,'Floor'],[2,2,'WallLeft'],[2,3,'WallFront'],[2,4,'Ceiling'],[2,5,'WallRight'],[2,6,'WallBack'],[3,7,'RoomVolume']],
+        #"center_freq": [125,250,500,1000,2000],
+        #"nBands": 5,
+        #"x_frequencies": 5,
+        #"vGroupsNames": [[1,8,'default'],[2,1,'Floor'],[2,2,'WallLeft'],[2,3,'WallFront'],[2,4,'Ceiling'],[2,5,'WallRight'],[2,6,'WallBack'],[3,7,'RoomVolume']],
         "tcalc": "decay" #Choose "decay" if the objective is to calculate the energy decay of the room with all its energetic parameters; Choose "stationarysource" if the aim is to understand the behaviour of a room subject to a stationary source
     }
     
     abs_coeff_path = os.path.join(os.path.dirname(__file__), 'test_abs_coeff.csv')
     mesh_path = os.path.join(os.path.dirname(__file__), 'test_mesh.msh')
     
+    should_initialise_gmsh = False
+    if not gmsh.is_initialized():
+        should_initialise_gmsh = True
+
+    #Calling function %create_vgroups_names%
+    vGroupsNames = create_vgroups_names(mesh_path, should_initialise_gmsh)
     
     st = time.time() #start time of calculation
          
@@ -77,10 +85,10 @@ def test_run_fvm_sim():
     m_atm = inputs["m_atm"]
     th = inputs["th"]
     #file_name = inputs["file_name"]
-    center_freq = inputs["center_freq"]
-    nBands = inputs["nBands"]
-    x_frequencies = inputs["x_frequencies"]
-    vGroupsNames = inputs["vGroupsNames"]
+    #center_freq = inputs["center_freq"]
+    #nBands = inputs["nBands"]
+    #x_frequencies = inputs["x_frequencies"]
+    #vGroupsNames = inputs["vGroupsNames"]
     tcalc = inputs.get("tcalc", "decay")  # default fallback
     
     df_abs = pd.read_csv(abs_coeff_path)
@@ -100,6 +108,9 @@ def test_run_fvm_sim():
     
     dim = -1
     tag = -1
+    
+    #Calling function %number_freq%
+    nBands, center_freq = number_freq(num_octave, fc_high, fc_low)
     
     #Calling function %get_nodes_elem%
     nodecoords, node_indices, bounEl, bounNode, voluEl, voluNode, belemNodes, velemNodes, boundaryEl_dict, volumeEl_dict = get_nodes_elem(dim,tag)
@@ -191,3 +202,46 @@ def test_run_fvm_sim():
 #results = run_sim(coord_source, coord_rec,fc_low,fc_high,num_octave, dt,m_atm , c0, Ws, th, pRef, rho, file_name, dim, tag, center_freq,tcalc = "decay")
 results = test_run_fvm_sim()
 
+
+
+def compare_values(new, expected, rtol=1e-6, atol=1e-8, path="root"):
+    if isinstance(expected, np.ndarray): #for arrays
+        np.testing.assert_allclose(new, expected, rtol=rtol, atol=atol)
+    
+    elif isinstance(expected, dict): #for dictionaries
+        assert isinstance(new, dict), f"{path}: expected dict"
+        for key in expected:
+            assert key in new, f"{path}: missing key {key}"
+            compare_values(new[key], expected[key], rtol, atol, path=f"{path}.{key}")
+
+    elif isinstance(expected, (list, tuple)): #for list and tuples
+        assert len(new) == len(expected), f"{path}: length mismatch"
+        for i, (n, e) in enumerate(zip(new, expected)):
+            compare_values(n, e, rtol, atol, path=f"{path}[{i}]")
+    
+    else: 
+        assert new == expected, f"{path}: {new} != {expected}"
+        
+        
+    
+
+data_dir = Path(__file__).parent / "test_data"
+
+with open(data_dir / "StateVariablesFVM.pkl", "rb") as f:
+    expected_data = pickle.load(f)
+    
+new_data = results
+
+variables_to_check = [
+    "c80_band",
+    "d50_band",
+    "edt_band",
+    "spl_r_off_band",
+    "t30_band",
+    "ts_band",
+    "w_new_band",
+    "w_rec_off_band",
+]
+
+for var in variables_to_check:
+    compare_values(new_data[var], expected_data[var], path=var)
