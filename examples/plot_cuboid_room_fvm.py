@@ -132,16 +132,35 @@ print("Centre time Ts band values:", result["ts_band"])
 times = result['t'][:len(result['t'])//2]
 energy_decay_curve = np.array(result['w_rec_off_band'])
 # %%
-ax = plt.axes()
-ax.plot(
+plt.figure()
+ax1 = plt.axes()
+ax1.plot(
     times, 
     10*np.log10(energy_decay_curve.T/energy_decay_curve[:, 0]),
     label=[f'{int(band)} Hz' for band in center_freq])
-ax.set_ylim(-65, 5)
-ax.legend()
-ax.grid(True)
-ax.set_ylabel("SPL decay (dB)")
-ax.set_xlabel("Time (s)")
+ax1.set_ylim(-65, 5)
+ax1.legend()
+ax1.grid(True)
+ax1.set_ylabel("SPL decay (dB)")
+ax1.set_xlabel("Time (s)")
+
+#%%
+###############################################################################
+#Plotting Reverberataion time T30
+###############################################################################
+t30 = np.array(result['t30_band'])
+
+# %%
+plt.figure()
+ax2 = plt.axes()
+ax2.plot(
+    center_freq, 
+    t30,
+    label=[f'{int(band)} Hz' for band in center_freq])
+ax2.set_ylim(0, 0.5)
+ax2.grid(True)
+ax2.set_ylabel("Reverberation time T30 (s)")
+ax2.set_xlabel("Frequency (Hz)")
 
 # %%
 temp_dir.cleanup()
