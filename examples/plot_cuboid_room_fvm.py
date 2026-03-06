@@ -140,7 +140,7 @@ ax.plot(
 ax.set_ylim(-65, 5)
 ax.legend()
 ax.grid(True)
-ax.set_ylabel("Energy Decay Curve (dB)")
+ax.set_ylabel("SPL decay (dB)")
 ax.set_xlabel("Time (s)")
 
 # %%
