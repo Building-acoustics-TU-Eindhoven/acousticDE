@@ -74,7 +74,7 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
     #center_freq = inputs["center_freq"]
     #nBands = inputs["nBands"]
     #x_frequencies = inputs["x_frequencies"]
-    vGroupsNames = inputs["vGroupsNames"]
+    #vGroupsNames = inputs["vGroupsNames"]
     tcalc = inputs.get("tcalc", "decay")  # default fallback
     
     df_abs = pd.read_csv(abs_coeff_path)
