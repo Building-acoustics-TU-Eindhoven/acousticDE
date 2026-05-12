@@ -62,7 +62,14 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
     
     with open(os.path.join(script_dir,inputs_path), "r") as f:
         inputs = json.load(f)
-         
+
+    # Optional GPU acceleration. Read from simulationSettings.de_use_gpu so
+    # CHORAS can flip this from the front-end without changing the API. Accept
+    # both bool and the "yes"/"no" strings that the CHORAS UI emits.
+    _gpu_raw = inputs.get("simulationSettings", {}).get("de_use_gpu", False)
+    use_gpu_flag = (str(_gpu_raw).strip().lower() in ("yes", "true", "1", "on")
+                    if not isinstance(_gpu_raw, bool) else _gpu_raw)
+
     # Access input variables
     coord_source = inputs["coord_source"]
     coord_rec = inputs["coord_rec"]
@@ -185,7 +192,7 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
     beta_zero_freq = beta_zero_freq_fun(boundary_areas, dt, Dx, interior_tet_sum, cell_volume)
     
     #Calling function %computing_energy_density%
-    w_new_band, w_rec_band, w_rec_off_band, w_rec_off_deriv_band, p_rec_off_deriv_band, idx_w_rec, t_off = computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt, c0, m_atm, Dx, interior_tet, cell_volume, s, cl_tet_r_keys, total_weights_r, tcalc, cl_tet_s_keys, source1, total_weights_s, t, sourceon_time, rho, inputs_path)
+    w_new_band, w_rec_band, w_rec_off_band, w_rec_off_deriv_band, p_rec_off_deriv_band, idx_w_rec, t_off = computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt, c0, m_atm, Dx, interior_tet, cell_volume, s, cl_tet_r_keys, total_weights_r, tcalc, cl_tet_s_keys, source1, total_weights_s, t, sourceon_time, rho, inputs_path, use_gpu=use_gpu_flag)
     
     if check_should_cancel(inputs_path):
         print("returning")

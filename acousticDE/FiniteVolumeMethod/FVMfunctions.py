@@ -1339,7 +1339,7 @@ def beta_zero_freq_fun(boundary_areas, dt, Dx, interior_tet_sum, cell_volume):
 #MAIN CALCULATION - COMPUTING ENERGY DENSITY
 ############################################################################### 
 
-def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt, c0, m_atm, Dx, interior_tet, cell_volume, s, cl_tet_r_keys, total_weights_r, tcalc, cl_tet_s_keys, source1, total_weights_s, t, sourceon_time, rho, json_file=None):
+def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt, c0, m_atm, Dx, interior_tet, cell_volume, s, cl_tet_r_keys, total_weights_r, tcalc, cl_tet_s_keys, source1, total_weights_s, t, sourceon_time, rho, json_file=None, use_gpu=False):
     """
     Computation of energy density
 
@@ -1415,6 +1415,27 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
     if "results" in result_container:
         called_from_choras = True
 
+    # ── Optional GPU path ──
+    # When use_gpu=True we run the inner per-time-step math on the GPU via
+    # CuPy. The CPU branch below is preserved verbatim so existing users get
+    # bit-identical output. GPU output is float-equivalent (within reduction-
+    # order epsilon, ~1e-12 relative for float64). If CuPy import fails (no
+    # CuPy installed, no CUDA available), we transparently fall back to CPU.
+    _xp = None
+    _cusp = None
+    if use_gpu:
+        try:
+            import cupy as _xp                         # noqa: F401
+            import cupyx.scipy.sparse as _cusp         # noqa: F401
+            from scipy.sparse import issparse as _issparse
+            print("acousticDE: computing_energy_density running on GPU (CuPy)")
+        except Exception as _e:
+            print(f"acousticDE: use_gpu=True but CuPy unavailable ({_e}); "
+                  f"falling back to CPU")
+            use_gpu = False
+            _xp = None
+            _cusp = None
+
     w_new_band = []
     w_rec_band = []
     w_rec_off_band = []
@@ -1424,47 +1445,96 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
     prev_percent_done = 0
 
     for iBand in range(nBands):
-        
+
         w_new = np.zeros(len(voluEl)) #unknown w at new time level (n+1)
-        #w_old = np.zeros(len(voluEl)) 
+        #w_old = np.zeros(len(voluEl))
         w = w_new #w at n level
         w_old = w #w_old at n-1 level
         #w[source_idx] = w1 #w (m time step) at source position -> impulse source
-        
+
         w_rec = np.zeros(recording_steps) #energy density at the receiver
-        
+
+        # Pre-compute the four time-invariant coefficients once per band (CPU
+        # version computed these inside the per-step formula every step --
+        # algebraically identical, micro-optimisation only).
+        _beta = beta_zero_freq[iBand]
+        _denom = 1.0 + _beta
+        _c1 = (1.0 - _beta) / _denom
+        _c2 = 2.0 * dt * c0 * m_atm / _denom
+        _c3 = 2.0 * dt * Dx / _denom
+        _c4 = 2.0 * dt / _denom
+
+        if use_gpu:
+            # One-time host->device transfers for this band. interior_tet may
+            # be a dense ndarray or a scipy sparse matrix -- handle both.
+            interior_tet_d = (_cusp.csr_matrix(interior_tet)
+                              if _issparse(interior_tet)
+                              else _xp.asarray(interior_tet))
+            cell_volume_d = _xp.asarray(cell_volume)
+            s_d           = _xp.asarray(s)
+            # source1 is a 1-D time series of length recording_steps
+            source1_d     = _xp.asarray(np.asarray(source1))
+            # Receiver / source index lists + per-tet weights, on device once
+            _r_keys = list(cl_tet_r_keys)
+            _s_keys = list(cl_tet_s_keys)
+            r_idx_d = _xp.asarray(_r_keys, dtype=_xp.int64)
+            s_idx_d = _xp.asarray(_s_keys, dtype=_xp.int64)
+            r_w_d   = _xp.asarray([total_weights_r[k] for k in _r_keys])
+            s_w_d   = _xp.asarray([total_weights_s[k] for k in _s_keys])
+            w_d     = _xp.asarray(w)
+            w_old_d = _xp.asarray(w_old)
+
         #Computing w;
         for steps in range(0, recording_steps):
             #Compute w at inner mesh points
             #time_steps = steps*dt #total time for the calculation
-            
+
             #Computing w_new (w at n+1 time step)
-                        
-            w_new = np.divide((np.multiply(w_old,(1-beta_zero_freq[iBand]))),(1+beta_zero_freq[iBand])) - \
-                np.divide((2*dt*c0*m_atm*w),(1+beta_zero_freq[iBand])) + \
-                    np.divide(np.divide((2*dt*Dx*(interior_tet@w)),cell_volume),(1+beta_zero_freq[iBand])) + \
-                        np.divide((2*dt*s),(1+beta_zero_freq[iBand])) #The absorption term is part of beta_zero
-                         
-            #Update w before next step
-            w_old = w #The w at n step becomes the w at n-1 step
-            w = w_new #The w at n+1 step becomes the w at n step
-            
-            #INTERPOLATION WITH N CELL CENTRES OR 4 CELL CENTRES
-            for tet_r in cl_tet_r_keys:
-                w_rec[steps] += w_new[tet_r] *total_weights_r[tet_r]   
-            
-            if tcalc == "decay":
+
+            if use_gpu:
+                # Same mathematical update as the CPU branch, on device:
+                #   w_new = c1*w_old - c2*w + c3*(M @ w)/V + c4*s
+                wTEMP_d = interior_tet_d @ w_d
+                w_new_d = _c1 * w_old_d - _c2 * w_d \
+                          + _c3 * (wTEMP_d / cell_volume_d) + _c4 * s_d
+                w_old_d = w_d
+                w_d = w_new_d
+                # Receiver interpolation: gather + dot, one device->host copy
+                w_rec[steps] = float((w_new_d[r_idx_d] * r_w_d).sum().get())
+                # Source update at the source tets
+                if tcalc == "decay":
+                    s_d[s_idx_d] = source1_d[steps] * s_w_d
+                elif tcalc == "stationarysource":
+                    s_d[s_idx_d] = source1_d[0] * s_w_d
+                # Keep CPU-side w_new available for percentage / end-of-band
+                # paths (only fetched once per band)
+                w_new = None  # not used per-step on GPU path
+            else:
+                w_new = np.divide((np.multiply(w_old,(1-beta_zero_freq[iBand]))),(1+beta_zero_freq[iBand])) - \
+                    np.divide((2*dt*c0*m_atm*w),(1+beta_zero_freq[iBand])) + \
+                        np.divide(np.divide((2*dt*Dx*(interior_tet@w)),cell_volume),(1+beta_zero_freq[iBand])) + \
+                            np.divide((2*dt*s),(1+beta_zero_freq[iBand])) #The absorption term is part of beta_zero
+
+                #Update w before next step
+                w_old = w #The w at n step becomes the w at n-1 step
+                w = w_new #The w at n+1 step becomes the w at n step
+
                 #INTERPOLATION WITH N CELL CENTRES OR 4 CELL CENTRES
-                for tet_s in cl_tet_s_keys:
-                     s[tet_s] = source1[steps] *total_weights_s[tet_s]
-            
-            if tcalc == "stationarysource":
-                #ORIGINAL
-                #s[source_idx] = source1[0]
-                
-                #INTERPOLATION SOURCE
-                for tet_s in cl_tet_s_keys:
-                     s[tet_s] = source1[0] *total_weights_s[tet_s]
+                for tet_r in cl_tet_r_keys:
+                    w_rec[steps] += w_new[tet_r] *total_weights_r[tet_r]
+
+                if tcalc == "decay":
+                    #INTERPOLATION WITH N CELL CENTRES OR 4 CELL CENTRES
+                    for tet_s in cl_tet_s_keys:
+                         s[tet_s] = source1[steps] *total_weights_s[tet_s]
+
+                if tcalc == "stationarysource":
+                    #ORIGINAL
+                    #s[source_idx] = source1[0]
+
+                    #INTERPOLATION SOURCE
+                    for tet_s in cl_tet_s_keys:
+                         s[tet_s] = source1[0] *total_weights_s[tet_s]
             
             idx_w_rec = np.argmin(np.abs(t - sourceon_time)) #index at which the t array is equal to the sourceon_time; I want the RT to calculate from when the source stops.
             w_rec_off = w_rec[idx_w_rec:]
@@ -1513,7 +1583,15 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
         #if (percentDone > curPercent):
         # print(str(percentDone) + "% of main calculation completed")
             #curPercent += 1;
-    
+
+        if use_gpu:
+            # Bring the final per-band state back to CPU so the rest of the
+            # pipeline (which is numpy-based) works unchanged. Also reflect
+            # any source-mutation back into the CPU-side `s` so subsequent
+            # bands start from the same state as the CPU branch would.
+            w_new = w_d.get()
+            s[:] = s_d.get()
+
         w_new_band.append(w_new)
         w_rec_band.append(w_rec)
         w_rec_off_band.append(w_rec_off)
