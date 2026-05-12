@@ -1453,10 +1453,22 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
             # Single-launch fused CUDA kernel that runs *all* time steps of
             # one frequency band in one kernel call. Eliminates the per-step
             # Python+CuPy dispatch overhead (~1 ms per step) that dominates a
-            # naive drop-in port. Only used when N_tets <= 1024 (one CUDA
-            # block); larger meshes fall back to the dispatch-bound branch
-            # which still works correctly.
+            # naive drop-in port.
+            #
+            # Cooperative-groups variant: grid-stride loop across tets +
+            # grid.sync() for the cross-block barrier on each step. Requires
+            # GPU compute capability >= 6.0 (sm_60+); RTX 2060 is sm_75. The
+            # kernel must be launched cooperatively (cuda.LaunchCooperative)
+            # for grid.sync() to work. No 1024-tet cap.
+            #
+            # Memory: 4 small global arrays (w, w_old, s, w_rec) + the CSR
+            # matrix. Receiver reduction uses an atomicAdd into w_rec[step]
+            # instead of shared memory (because n_r is tiny, ~4, and we no
+            # longer have a single-block shared-mem region across the grid).
             _fused_kernel = _xp.RawKernel(r"""
+#include <cooperative_groups.h>
+namespace cg = cooperative_groups;
+
 extern "C" __global__ void fvm_band_steps(
     double* __restrict__ w,
     double* __restrict__ w_old,
@@ -1466,6 +1478,7 @@ extern "C" __global__ void fvm_band_steps(
     const int*    __restrict__ M_indices,
     const int*    __restrict__ M_indptr,
     const double* __restrict__ cell_volume,
+    double*       __restrict__ wTEMP_g,        // global scratch [N_tets]
     const double* __restrict__ source1,
     const int*    __restrict__ r_idx,
     const double* __restrict__ r_w,
@@ -1476,62 +1489,66 @@ extern "C" __global__ void fvm_band_steps(
     const int n_r, const int n_s,
     const int decay_mode
 ) {
-    extern __shared__ double smem[];
-    double* wTEMP_s = smem;                  // [N_tets]
-    double* w_rec_partial = smem + N_tets;   // [n_r]
+    cg::grid_group grid = cg::this_grid();
+    const int gid = blockIdx.x * blockDim.x + threadIdx.x;
+    const int stride = gridDim.x * blockDim.x;
 
-    const int tid = threadIdx.x;
     for (int step = 0; step < N_steps; ++step) {
-        // 1) sparse matvec: each thread computes one row of M @ w
-        if (tid < N_tets) {
+        // 1) sparse matvec: grid-stride loop over rows
+        for (int i = gid; i < N_tets; i += stride) {
             double acc = 0.0;
-            const int rs = M_indptr[tid];
-            const int re = M_indptr[tid + 1];
+            const int rs = M_indptr[i];
+            const int re = M_indptr[i + 1];
             for (int j = rs; j < re; ++j) {
                 acc += M_data[j] * w[M_indices[j]];
             }
-            wTEMP_s[tid] = acc;
+            wTEMP_g[i] = acc;
         }
-        __syncthreads();
+        grid.sync();
 
         // 2) per-tet update: w_new = c1*w_old - c2*w + c3*M@w/V + c4*s
-        double new_val = 0.0;
-        if (tid < N_tets) {
-            new_val = c1 * w_old[tid]
-                    - c2 * w[tid]
-                    + c3 * (wTEMP_s[tid] / cell_volume[tid])
-                    + c4 * s[tid];
+        // We compute new_val into a private register, sync, then write
+        // both w_old <- w and w <- new_val in a second pass.
+        // (We can't write w[i] = new_val directly because other threads
+        // are still reading w[i] for receiver interpolation. So: 1st pass
+        // computes; 2nd pass writes; the grid sync between separates them.)
+        // We stash new_val in wTEMP_g[i] since wTEMP_g is no longer needed.
+        for (int i = gid; i < N_tets; i += stride) {
+            wTEMP_g[i] = c1 * w_old[i]
+                       - c2 * w[i]
+                       + c3 * (wTEMP_g[i] / cell_volume[i])
+                       + c4 * s[i];
         }
-        __syncthreads();
+        grid.sync();
 
-        // 3) swap: w_old <- w; w <- new_val
-        if (tid < N_tets) {
-            w_old[tid] = w[tid];
-            w[tid] = new_val;
+        // 3) swap: w_old <- w; w <- new_val (stashed in wTEMP_g)
+        for (int i = gid; i < N_tets; i += stride) {
+            w_old[i] = w[i];
+            w[i] = wTEMP_g[i];
         }
-        __syncthreads();
+        grid.sync();
 
         // 4) receiver interpolation w_rec[step] = sum(w[r_idx[i]] * r_w[i])
-        if (tid < n_r) {
-            w_rec_partial[tid] = w[r_idx[tid]] * r_w[tid];
+        // n_r is small (typically 4). One atomicAdd per thread per step is
+        // cheap. Zero the slot first via thread 0.
+        if (gid == 0) {
+            w_rec[step] = 0.0;
         }
-        __syncthreads();
-        if (tid == 0) {
-            double sum = 0.0;
-            for (int i = 0; i < n_r; ++i) sum += w_rec_partial[i];
-            w_rec[step] = sum;
+        grid.sync();
+        if (gid < n_r) {
+            atomicAdd(&w_rec[step], w[r_idx[gid]] * r_w[gid]);
         }
-        __syncthreads();
+        grid.sync();
 
         // 5) source update at source tets
-        if (tid < n_s) {
+        if (gid < n_s) {
             const double sv = decay_mode ? source1[step] : source1[0];
-            s[s_idx[tid]] = sv * s_w[tid];
+            s[s_idx[gid]] = sv * s_w[gid];
         }
-        __syncthreads();
+        grid.sync();
     }
 }
-""", "fvm_band_steps")
+""", "fvm_band_steps", options=("--std=c++14",))
             from scipy.sparse import issparse as _issparse, csr_matrix as _csr_matrix
             print("acousticDE: computing_energy_density running on GPU (CuPy + fused kernel)")
         except Exception as _e:
@@ -1600,11 +1617,10 @@ extern "C" __global__ void fvm_band_steps(
             use_fused = (
                 _fused_kernel is not None
                 and _issparse(interior_tet)
-                and N_tets <= 1024
             )
             if iBand == 0:
                 print(f"acousticDE: GPU path = "
-                      f"{'fused single-launch kernel' if use_fused else 'per-step CuPy (dispatch-bound)'} "
+                      f"{'fused cooperative-launch kernel' if use_fused else 'per-step CuPy (dispatch-bound)'} "
                       f"(N_tets={N_tets}, sparse={_issparse(interior_tet)})")
             if use_fused:
                 M_data_d    = interior_tet_d.data.astype(_xp.float64, copy=False)
@@ -1613,21 +1629,29 @@ extern "C" __global__ void fvm_band_steps(
                 r_idx_i32_d = r_idx_d.astype(_xp.int32, copy=False)
                 s_idx_i32_d = s_idx_d.astype(_xp.int32, copy=False)
                 w_rec_d     = _xp.zeros(recording_steps, dtype=_xp.float64)
+                wTEMP_d     = _xp.empty(N_tets, dtype=_xp.float64)  # global scratch
                 decay_mode  = 1 if tcalc == "decay" else 0
-                block_size  = ((max(N_tets, len(_r_keys), len(_s_keys)) + 31) // 32) * 32
-                block_size  = min(block_size, 1024)
-                shared_bytes = (N_tets + len(_r_keys)) * 8
+
+                # Cooperative launch: pick a (block_dim, grid_dim) sized to
+                # cover N_tets with a grid-stride loop. The CUDA cooperative-
+                # launch contract requires grid_dim * block_dim threads to be
+                # co-resident; CuPy uses cuLaunchCooperativeKernel under the
+                # hood when enable_cooperative_groups=True.
+                block_dim = 256
+                grid_dim  = (N_tets + block_dim - 1) // block_dim
+                grid_dim  = max(grid_dim, 1)
+
                 _fused_kernel(
-                    (1,), (block_size,),
+                    (grid_dim,), (block_dim,),
                     (w_d, w_old_d, s_d, w_rec_d,
                      M_data_d, M_indices_d, M_indptr_d,
-                     cell_volume_d, source1_d,
+                     cell_volume_d, wTEMP_d, source1_d,
                      r_idx_i32_d, r_w_d, s_idx_i32_d, s_w_d,
                      np.float64(_c1), np.float64(_c2), np.float64(_c3), np.float64(_c4),
                      np.int32(N_tets), np.int32(recording_steps),
                      np.int32(len(_r_keys)), np.int32(len(_s_keys)),
                      np.int32(decay_mode)),
-                    shared_mem=shared_bytes,
+                    enable_cooperative_groups=True,
                 )
                 _xp.cuda.Stream.null.synchronize()
                 w_rec[:] = w_rec_d.get()
