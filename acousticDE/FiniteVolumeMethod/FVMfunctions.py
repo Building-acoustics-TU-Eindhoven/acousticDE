@@ -1719,22 +1719,30 @@ extern "C" __global__ void fvm_band_steps(
                 elif tcalc == "stationarysource":
                     s[_s_idx_np] = source1[0] * _s_w_np
             
-            idx_w_rec = np.argmin(np.abs(t - sourceon_time)) #index at which the t array is equal to the sourceon_time; I want the RT to calculate from when the source stops.
-            w_rec_off = w_rec[idx_w_rec:]
-            p_rec_off = (w_rec[idx_w_rec:])*rho*c0**2
-            t_off = t[idx_w_rec:]
-            
-            #Envelope of Impulse response from the energy density
-            w_rec_off_deriv = w_rec_off #initialising an array of derivative equal to the w_rec_off -> this will be the impulse response after modifying it
-            w_rec_off_deriv = np.delete(w_rec_off_deriv, 0) #delete the first element of the array -> this means shifting the array one step before and therefore do a derivation
-            w_rec_off_deriv = np.append(w_rec_off_deriv,0) #add a zero in the last element of the array -> for derivation and to have the same length as previously
-            #impulse = ((w_rec_off - w_rec_off_deriv))/dt#/(rho*c0**2) #This is the difference between the the energy density and the impulse response 
-            
-            #Envelope of Impulse response from the pressure
-            p_rec_off_transf = p_rec_off #initialising an array of derivative equal to the w_rec_off -> this will be the impulse response after modifying it
-            p_rec_off_transf = np.delete(p_rec_off_transf, 0) #delete the first element of the array -> this means shifting the array one step before and therefore do a derivation
-            p_rec_off_transf = np.append(p_rec_off_transf,0) #add a zero in the last element of the array -> for derivation and to have the same length as previously
-            p_rec_off_deriv = ((p_rec_off - p_rec_off_transf))/dt
+            # Receiver-off / derivative block. The original code re-ran this
+            # *every* time step but only the final iteration's values are
+            # actually used (everything gets overwritten each step).
+            # For recording_steps ~ 10000 and idx_w_rec slice length ~ 9000,
+            # this was ~50k numpy ops per step -- the dominant CPU cost of
+            # the loop, swamping the actual matvec. Guard so it only runs on
+            # the last iteration; mathematically equivalent.
+            if steps == recording_steps - 1:
+                idx_w_rec = np.argmin(np.abs(t - sourceon_time)) #index at which the t array is equal to the sourceon_time; I want the RT to calculate from when the source stops.
+                w_rec_off = w_rec[idx_w_rec:]
+                p_rec_off = (w_rec[idx_w_rec:])*rho*c0**2
+                t_off = t[idx_w_rec:]
+
+                #Envelope of Impulse response from the energy density
+                w_rec_off_deriv = w_rec_off #initialising an array of derivative equal to the w_rec_off -> this will be the impulse response after modifying it
+                w_rec_off_deriv = np.delete(w_rec_off_deriv, 0) #delete the first element of the array -> this means shifting the array one step before and therefore do a derivation
+                w_rec_off_deriv = np.append(w_rec_off_deriv,0) #add a zero in the last element of the array -> for derivation and to have the same length as previously
+                #impulse = ((w_rec_off - w_rec_off_deriv))/dt#/(rho*c0**2) #This is the difference between the the energy density and the impulse response
+
+                #Envelope of Impulse response from the pressure
+                p_rec_off_transf = p_rec_off #initialising an array of derivative equal to the w_rec_off -> this will be the impulse response after modifying it
+                p_rec_off_transf = np.delete(p_rec_off_transf, 0) #delete the first element of the array -> this means shifting the array one step before and therefore do a derivation
+                p_rec_off_transf = np.append(p_rec_off_transf,0) #add a zero in the last element of the array -> for derivation and to have the same length as previously
+                p_rec_off_deriv = ((p_rec_off - p_rec_off_transf))/dt
 
             #print(time_steps)
             percentDone = round(
