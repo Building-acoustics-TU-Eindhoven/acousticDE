@@ -1417,7 +1417,8 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
 
     cur_percent_done = 0
 
-
+    percentage_json = []
+    
     if json_file is not None:
         with open(json_file, "r") as file:
             percentage_json = json.load(file)
@@ -1489,14 +1490,28 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
                 p_rec_off_transf = p_rec_off[1:]
                 p_rec_off_transf = np.pad(p_rec_off_transf, (0, 1), 'constant')
                 p_rec_off_deriv = ((p_rec_off - p_rec_off_transf))/dt
-                #print(time_steps)
+                
+            # Increment the percentage
+            percent_done = round(
+                100 * (iBand / nBands + steps / recording_steps * 1 / nBands)
+            )
             
-        percent_done = round(100*iBand/nBands)
-        if (percent_done > cur_percent_done):
-            print(str(percent_done) + "% of main calculation completed")
-            percentage_json["results"][0]["percentage"] = percent_done
-            cur_percent_done += 1
-    
+            if (percent_done > cur_percent_done):
+                print(str(percent_done) + "% of main calculation completed")
+
+                # If there is a json file, write the progress to it
+                if percentage_json is not None:
+                    percentage_json["results"][0]["percentage"] = percent_done
+                    with open(json_file, "w") as percentage_update:
+                        percentage_update.write(
+                            json.dumps(percentage_json, indent=4)
+                        )
+                        
+                # Increment the (rounded) current percentage done
+                cur_percent_done += 1
+
+                        
+                
         w_new_band.append(w_new)
         w_rec_band.append(w_rec)
         w_rec_off_band.append(w_rec_off)
@@ -1705,4 +1720,3 @@ def save_fvm(filename,variables):
 
 if __name__ == '__main__':
     st = time.time() #start time of calculation
-
