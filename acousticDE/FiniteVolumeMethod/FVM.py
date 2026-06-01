@@ -51,8 +51,6 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
     
     st = time.time() #start time of calculation
     
-    #file_path = os.path.join(script_dir, mesh_file) # Full path to the file
-
     should_initialise_gmsh = False
     if not gmsh.is_initialized():
         should_initialise_gmsh = True
@@ -60,7 +58,7 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
     #Calling function %create_vgroups_names%
     vGroupsNames = create_vgroups_names(mesh_file_path, should_initialise_gmsh)
     
-    with open(os.path.join(script_dir,inputs_path), "r") as f:
+    with open(os.path.abspath(inputs_path), "r") as f:
         inputs = json.load(f)
          
     # Access input variables
@@ -178,12 +176,8 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
     
     #Calling function %computing_energy_density%
     w_new_band, w_rec_band, w_rec_off_band, w_rec_off_deriv_band, p_rec_off_deriv_band, idx_w_rec, t_off = computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt, c0, m_atm, Dx, interior_tet, cell_volume, s, cl_tet_r_keys, total_weights_r, tcalc, cl_tet_s_keys, source1, total_weights_s, t, sourceon_time, rho, inputs_path)
-    
-    if check_should_cancel(inputs_path):
-        print("returning")
-        return
-    else:
-        print("100% of main calculation completed")
+
+    print("100% of main calculation completed")
     
     #Calling function %freq_parameters%
     w_rec_x_band, w_rec_y_band, spl_stat_x_band, spl_stat_y_band, spl_r_band, spl_r_off_band, spl_r_norm_band, sch_db_band, spl_r_t0_band, t30_band, t20_band, edt_band, c80_band, d50_band, ts_band = freq_parameters(nBands, line_rec_x_idx_list, w_new_band, line_rec_y_idx_list, rho, c0, Ws, dist_x, dist_y, pRef, w_rec_band, w_rec_off_band, tcalc, t, idx_w_rec, V, Eq_A, S, dist_sr)
@@ -234,5 +228,3 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
     print("Simulation finished successfully! Results in resultsFVM.pkl file")
     
     return results
-
-script_dir = os.path.dirname(os.path.abspath(__file__))

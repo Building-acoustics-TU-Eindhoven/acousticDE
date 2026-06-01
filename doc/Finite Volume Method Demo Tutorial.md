@@ -11,10 +11,13 @@ The file _cube.skp_ is a SketchUp file with a room of volume 3x3x3 $m^3$. The fi
 
 The inputs need to be prepared. For that, follow the instruction in [Finite Volume Method Use Documentation, Paragraph 'General Inputs'](https://building-acoustics-tu-eindhoven.github.io/acousticDE/Finite%20Volume%20Method%20Use.html#general-inputs). This will create a csv file that you need to fill with the absorption coefficients.
 
-Once all the files are created (msh file, json file and csv file), the main acoustics simulation can be run as below:
+Once all the files are created (msh file, json file and csv file), the main acoustics simulation can be run in cmd window with the following commands:
 
 ```
-results = run_fvm_sim('C:\....\cube.msh', 'C:\....\cube_input_fvm.json', 'C:\....\absorption_coefficients.csv')
+python
+>>> import acousticDE
+>>> from acousticDE.FiniteVolumeMethod.FVM import run_fvm_sim
+>>> results = run_fvm_sim('C:\....\cube.msh', 'C:\....\cube_input_fvm.json', 'C:\....\absorption_coefficients.csv')
 ```
 
 The software should provide results of Sound Pressure Levels at the receiver position, Reverberation time, Clarity and other energetic parameters in a pickle file called _resultsFVM.pkl_.

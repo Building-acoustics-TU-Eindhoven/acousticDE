@@ -38,7 +38,9 @@ extensions = ["sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.todo",
     "sphinx.ext.viewcode",
-    'myst_parser']
+    'myst_parser',
+    "sphinx_gallery.gen_gallery",
+]
 source_suffix = {
     '.rst': 'restructuredtext',
     '.md': 'myst',
@@ -73,4 +75,8 @@ myst_enable_extensions = [
     "dollarmath" # support for $...$ and $$...$$
 ]
 
-
+sphinx_gallery_conf = {
+    "examples_dirs": "../examples",   # path to your example scripts
+    "gallery_dirs": "auto_examples",  # path to where to save gallery generated output
+    "image_scrapers": ("matplotlib",),
+}

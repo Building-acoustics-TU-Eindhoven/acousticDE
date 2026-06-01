@@ -48,7 +48,7 @@ def run_fdm_sim(inputs_path):
     
     st = time.time() #start time of calculation
     
-    with open(os.path.join(script_dir,inputs_path), "r") as f:
+    with open(os.path.abspath(inputs_path), "r") as f:
         print(type(f))
         inputs = json.load(f)
     
@@ -199,5 +199,3 @@ def run_fdm_sim(inputs_path):
     print("Simulation finished successfully! Results in resultsFDM.pkl file")
     
     return results       
-
-script_dir = os.path.dirname(os.path.abspath(__file__))

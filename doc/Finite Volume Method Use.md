@@ -1,14 +1,15 @@
 ﻿# Finite Volume Method Use
 
 ## Requirements
-1. Set up acousticDE following the instructions in the installation section of the READme file. 
-2. Download and install SketchUp from [SketchUp website](https://www.sketchup.com/plans-and-pricing/sketchup-free) or use the free web-based platform;
-3. Download and install g-mesh from [G-msh website](https://gmsh.info/);
-4. Install the MeshKit extension of SketchUp from the extension warehouse.
+1. Set up acousticDE following the instructions in the installation section of the [READme file](https://github.com/Building-acoustics-TU-Eindhoven/acousticDE). 
+2. Download and install Blender [Blender website](https://www.blender.org/download/) or SketchUp Pro from [SketchUp website](https://sketchup.trimble.com/en/plans-and-pricing);
+3. Download and install Gmsh from [Gmsh website](https://gmsh.info/);
+4. If working with SketchUp Pro, then install the MeshKit extension of SketchUp from the extension warehouse.
 
 ## Usage & files
 To use the software, the following files are to be used:
 - _PrepareInputsFVM.py_: to create the json file with the inputs of the room;
+- _CreateGeoFVM.py_: to convert from obj file to geo file;
 - _CreateMeshFVM.py_: to create the volumetric mesh using Gmsh software;
 - _FVM.py_: it contains the main function run_fvm_sim to run the full simulation and calculate the acoustics parameters in the room.
 
@@ -22,24 +23,70 @@ The main software works with the following associated functions:
 ## Inputs
 
 ### Geometry & Mesh
-The geometry for this method is defined within SketchUp. 
-In order to create a volumetric mesh of the room, the following steps need to be followed in SketchUp:
+The geometry for this method can be created using two workflows depending if SketchUp or Blender is used.
+
+#### SketchUp Pro workflow
+
+In order to create a volumetric mesh of the room with SketchUp Pro, the following steps need to be followed:
 1. Create the 3D geometry of the room to simulate in SketchUp, setting the units of the geometry in meters;
-2. In the MeshKit extension banner in SketchUp software, set the active mesher to gmsh by clicking on the "edit configuration button"
+2. In the MeshKit extension banner in SketchUp software, set the active mesher to gmsh by clicking on the "edit configuration button" 
+![editconfigurationbutton](images/editconfigurationbutton.png)
 3. Include the Gmsh Path of the gmsh.exe and select gmsh as the active mesher;
 4. Group the overal geometry (surfaces and edges) bounding the internal air volume by selecting everything, right-clicking and clicking "Make Group";
-5. Select the Group and click "Set selected as an smesh region and define properties" in MeshKit;
+5. Select the Group and click "Set selected as an smesh region and define properties" ![Set selected as an smesh region and define properties](images/setselectedasansmeshregion.png) in MeshKit;
 6. In the "Region Options: gmsh" menu, keep all the default option but change only the name of the region by writing, for example, "RoomVolume" and click "ok";
 7. Open the group by double clicking on the object;
 8. Select one or multiple surfaces you want to assign a boundary property;
-9. Click "Add tetgen boundary to selected" in MeshKit;
+9. Click "Add tetgen boundary to selected" ![Add tetgen boundary to selected](images/addtetgenboundary.png) in MeshKit;
 10. Under "Refine", change the refinement to 1;
 11. Under "Name": change the name to "materialname", e.g., "carpet" and click "ok";
-12. After finishing defining all the boundaries, select the group and click "export to generate mesh" in MeshKit;
+12. After finishing defining all the boundaries, select the group and click "export to generate mesh" ![export to generate mesh](images/export.png) in MeshKit;
 13. Select Format = "gmsh" and Units = "m" and click "ok";
 14. Keep the default options apart from "pointSizes" which should change to True, click "ok" and save the .geo file with the name of your choice;
 
 The .geo file has been created. This needs to be converted into a .msh file, to get the full volumetric mesh.
+Using the <a href="https://raw.githubusercontent.com/Building-acoustics-TU-Eindhoven/acousticDE/refs/heads/master/acousticDE/FiniteVolumeMethod/CreateMeshFVM.py" download>Download CreateMeshFVM.py</a> script, please input the following variables:
+- name_of_geo_file: the name of the geo file you want to simulate (e.g. _3x3x3.geo_);
+- name_of_gmsh_file: the name of the mesh file you want this python file to generate (e.g. _3x3x3.msh_); and
+- length_of_mesh: The mesh length value describes the size of the spatial resolution of the mesh in the space and is vital to discretize correctly the space and achieve precise and converged results. Through various trials, it has been established that a mesh length of 1 meter is generally adequate. However, for computations involving complex geometries or small rooms, a smaller length of mesh (0.5 meter or lower) is recommended. The mesh length choice is contingent upon user preferences for details in parameters values, room dimensions but mostly dependent on the mean free path of the room. In fact, the length of mesh would need to be equal or smaller than the mean free path of the room.
+
+```
+name_of_geo_file = '3x3x3.geo'
+name_of_gmsh_file = "3x3x3.msh"
+length_of_mesh = 1
+```
+
+This script creates the volumetric mesh using Gmsh software. The method is suitable for any type of geometry.
+
+
+#### Blender workflow
+In order to create a volumetric mesh of the room with Blender, the following steps need to be followed:
+1. Create the geometry. Remember to move the full geometry in the positive quadrant;
+2. On the top-right end side, you will see 'Scene Collection', then 'Collection' and 'Plane'. Rename the 'Plane' to for example 'RoomVolume';
+3. Once you finish the geometry, go to the 'Material properties' tab on the bottom-right area with this icon ![Material properties](images/MaterialBlender.png)
+4. In the 'Material Properties' tab, press the plus sign 'Add a material slot'
+5. Select 'New' and double click to put the material name, e.g., “carpet”; while on this window, it is best to change the 'Base Color' of the material, such that you can then later identify the surfaces with that specific material in the model.
+6. Go in the 'Edit Mode' and click Select mode 'Face'.
+7. Select all the surfaces/faces in which you want to assign the material “carpet” and press 'Assign'.
+8. Continue doing this for all the materials and all the surfaces.
+9. In the Perspective window, if you want to make sure that all the surfaces are assigned in the right material, press "Z" and then 'Material Preview'. You will see that the surfaces are colored depending on the color chosen for each material.
+10. Before going to the next step, please check that all the surfaces have been assigned to a material. The diffusion equation model will not work if there are some mistake in the way the assignment is done.
+11. After finishing defining all the boundaries/surface, you are ready to export to obj file.
+12. Go to 'File', 'Export' and press 'Wavefront (.obj)'. 
+13. IMPORTANT! Make sure to keep the default options but select in the Grouping list the 'Material Groups'.
+14. Press 'Export Wavefront OBJ' and the .obj file has been created.
+
+The .obj file has been created. This needs to be converted into a .geo file, that is compatible to the meshing creation later on.
+Using the <a href="https://raw.githubusercontent.com/Building-acoustics-TU-Eindhoven/acousticDE/refs/heads/master/acousticDE/FiniteVolumeMethod/CreateGeoFVM.py" download>Download CreateGeoFVM.py</a> script, please input the following variables:
+- name_of_obj_file: the name of the obj file you want to simulate (e.g. _3x3x3.obj_);
+- name_of_geo_file: the name of the geo file you want this python file to generate (e.g. _3x3x3.geo_).
+```
+name_of_obj_file = '3x3x3.obj'
+name_of_geo_file = "3x3x3.geo"
+```
+
+The .geo file has been created. This needs to be converted into a .msh file, to get the full volumetric mesh.
+
 Using the <a href="https://raw.githubusercontent.com/Building-acoustics-TU-Eindhoven/acousticDE/refs/heads/master/acousticDE/FiniteVolumeMethod/CreateMeshFVM.py" download>Download CreateMeshFVM.py</a> script, please input the following variables:
 - name_of_geo_file: the name of the geo file you want to simulate (e.g. _3x3x3.geo_);
 - name_of_gmsh_file: the name of the mesh file you want this python file to generate (e.g. _3x3x3.msh_); and

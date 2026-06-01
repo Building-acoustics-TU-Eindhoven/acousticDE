@@ -20,7 +20,7 @@ from math import log
 import gmsh
 import numpy as np
 import json
-
+from scipy.sparse import csr_matrix
 from acousticDE.FiniteVolumeMethod.FunctionClarity import clarity
 from acousticDE.FiniteVolumeMethod.FunctionDefinition import definition
 from acousticDE.FiniteVolumeMethod.FunctionCentreTime import centretime
@@ -30,19 +30,6 @@ import logging
 
 # Create logger for this module
 logger = logging.getLogger(__name__)
-
-def check_should_cancel(json_file_path_in):
-    try:
-        if json_file_path_in is not None:
-            with open(json_file_path_in, "r") as json_file_to_check:
-                data = json.load(json_file_to_check)
-
-        # Update the specified field value
-        if "should_cancel" in data:
-            return data["should_cancel"]
-
-    except Exception as e:
-        print("check_should_cancel returned: " + str(e))
 
 #%%
 ###############################################################################
@@ -94,17 +81,16 @@ def abs_term(th,abscoeff_list,c0):
         Absx_array : array of floats
             Calculated absorption term for each absorption coefficient for each frequency
     """
-    Absx_array = np.array([])
-    for abs_coeff in abscoeff_list:
-        #print(abs_coeff)
-        if th == 1:
-            Absx = (c0*abs_coeff)/4 #Sabine
-        elif th == 2:
-            Absx = (c0*(-log(1-abs_coeff)))/4 #Eyring
-        elif th == 3:
-            Absx = (c0*abs_coeff)/(2*(2-abs_coeff)) #Modified by Xiang
-        Absx_array = np.append(Absx_array, Absx)
-    return Absx_array
+    Absx_array = np.array(abscoeff_list)
+
+    if th == 1:
+        Absx = (c0*Absx_array)/4 #Sabine
+    elif th == 2:
+        Absx = (c0*(-np.log(1-Absx_array)))/4 #Eyring
+    elif th == 3:
+        Absx = (c0*Absx_array)/(2*(2-Absx_array)) #Modified by Xiang
+
+    return Absx
 
 def create_vgroups_names(file_path, should_initialise_gmsh=True):
     """
@@ -503,7 +489,6 @@ def get_neighbour_faces(voluEl):
 #CALCULATION OF INTERIOR TETRAHEDRONS
 ###############################################################################
 # Interior Tetrahedrons calculations
-
 def interior_tetra(voluEl,cell_center,velemNodes,nodecoords,node_indices):
     """
     Calculation of shared area divided shared distance between tetrahedrons
@@ -515,7 +500,7 @@ def interior_tetra(voluEl,cell_center,velemNodes,nodecoords,node_indices):
         cell_center : array of floats
             The coordinates of the center of the cell element per each element
         velemNodes : array of int 
-            Indices of all the volumetric nodes per each colume element in the mesh
+            Indices of all the volumetric nodes per each volume element in the mesh
         nodecoords : array of floats 
             The coordinates of each node in the mesh
         node_indices : dict 
@@ -528,39 +513,51 @@ def interior_tetra(voluEl,cell_center,velemNodes,nodecoords,node_indices):
         interior_tet_sum : array of floats
             Sum of interior_tet per columns
     """
-    interior_tet = np.zeros((len(voluEl), len(voluEl))) #initialization matrix of tetrahedron per tetrahedron
+    velemNodes = velemNodes - 1
+    nElem = velemNodes.shape[0]
+
+    ElemFacePatterns = np.array([
+        [1, 2, 3],
+        [0, 2, 3],
+        [0, 1, 3],
+        [0, 1, 2],
+    ], dtype=np.int64)
+
+    FaceIDs = np.sort(velemNodes[:, ElemFacePatterns].reshape(-1, 3), axis=1)
+
+    uniq_faces, invIDX, UniqNum = np.unique(
+        FaceIDs, axis=0, return_inverse=True, return_counts=True
+    )
+
+    CommonFaces = UniqNum == 2
+
+    CommonFaces = np.nonzero(CommonFaces[invIDX])[0]
+
+    sortCommonIDs = np.argsort(invIDX[CommonFaces], kind="mergesort")
+    CommonFaces = CommonFaces[sortCommonIDs]
+
+    TwoFaces = CommonFaces.reshape(-1, 2)
+
+    tetA = np.concatenate((TwoFaces[:, 0] // 4, TwoFaces[:, 1] // 4))
+    tetB = np.concatenate((TwoFaces[:, 1] // 4, TwoFaces[:, 0] // 4))
+
+    FaceNodes = FaceIDs[TwoFaces[:, 0]]
+
+    sc0 = nodecoords[FaceNodes[:, 0]]
+    sc1 = nodecoords[FaceNodes[:, 1]]
+    sc2 = nodecoords[FaceNodes[:, 2]]
+
+    shared_area = 0.5 * np.linalg.norm(np.cross(sc1 - sc0, sc2 - sc0), axis=1)
+
+    shared_distance = np.linalg.norm(cell_center[TwoFaces[:, 0] // 4] - cell_center[TwoFaces[:, 1] // 4], axis=1)
+
+    AreaDivDist = shared_area/shared_distance
+
+    AreaDivDist = np.concatenate((AreaDivDist, AreaDivDist))
+
+    interior_tet = csr_matrix((AreaDivDist, (tetA, tetB)), shape=(nElem, nElem))
     
-    for i in range(len(voluEl)): #for each tetrahedron, take its centre
-        #print(i)
-        cell_center_i = cell_center[i]
-        for j in range(len(voluEl)): #for each tetrahedron, take its centre
-            #cell_center_j = cell_center[j]
-            #print(j)
-            if i != j: #if the tetrahedrons are not the same one, then check if there are shared nodes in between the two tetrahedron i and j
-                shared_nodes = np.intersect1d(velemNodes[i], velemNodes[j])
-                #shared_nodes = []
-                #count = 0
-                #for node in velemNodes[i]: #for each node in tetrahedron i
-                #    print(node)
-                #    if node in velemNodes[j]: #if each node of the tetrahedron i is in nodelist of tetrahedron j
-                #        count += 1
-                #        shared_nodes.append(node) #append the node that it is in common
-                if len(shared_nodes) == 3: #after have done this for all the nodes, if the cound is 3 then calculate the shared area between the tetrahedrons
-                    sc0 = nodecoords[node_indices[shared_nodes[0]],:]
-                    #sc0 = gmsh.model.mesh.getNode(shared_nodes[0])[0] #coordinates of node 0
-                    sc1 = nodecoords[node_indices[shared_nodes[1]],:]
-                    #sc1 = gmsh.model.mesh.getNode(shared_nodes[1])[0] #coordinates of node 1
-                    sc2 = nodecoords[node_indices[shared_nodes[2]],:]
-                    #sc2 = gmsh.model.mesh.getNode(shared_nodes[2])[0] #coordinates of node 2
-                    shared_area = np.linalg.norm(np.cross(sc2-sc0,sc1-sc0))/2 #compute shared area
-                    shared_distance = np.linalg.norm(cell_center_i - cell_center[j])
-                        #sqrt((abs(cell_center_i[0] - cell_center_j[0]))**2 + (abs(cell_center_i[1] - cell_center_j[1]))**2 + (abs(cell_center_i[2] - cell_center_j[2]))**2) #distance between volume elements
-                    interior_tet[i, j] = shared_area/shared_distance #division between shared area and shared distance
-                else:
-                    shared_area = 0
-                    interior_tet[i, j] = shared_area
-    
-    interior_tet_sum = np.sum(interior_tet, axis=1) #sum of interior_tet per columns (so per i element)
+    interior_tet_sum = np.asarray(interior_tet.sum(axis=1)).ravel()
     
     return interior_tet, interior_tet_sum
 
@@ -699,11 +696,25 @@ def boundary_triang(velemNodes, nBands, bounNode, nodecoords, node_indices, tria
     """
     total_boundArea = 0  # initialization of total surface area of the room
     boundary_areas = []  # Initialize a list to store boundary_areas values for each tetrahedron
+
+    MapBoundSurf = {
+        frozenset(surface): idx 
+        for idx, surface in enumerate(bounNode)
+    }
+
     import itertools
+    import math
+
+    def tri_area_from_edges(v1, v2):
+        cx = v1[1]*v2[2] - v1[2]*v2[1]
+        cy = v1[2]*v2[0] - v1[0]*v2[2]
+        cz = v1[0]*v2[1] - v1[1]*v2[0]
+        return 0.5 * math.sqrt(cx*cx + cy*cy + cz*cz)
+
     face_areas = np.zeros(
         len(velemNodes))  # Per each tetrahedron, if there is a face that is on the boundary, include the area, otehrwise zero
     for idx, element in enumerate(velemNodes):  # for index and element in the number of tetrahedrons
-        # if idx == 491:
+        idx = int(idx)
         tetrahedron_boundary_areas = 0  # initialization tetrahedron face on boundary*its absorption term
         total_tetrahedron_boundary_areas = np.zeros(nBands)  # initialization total tetrahedron face on boundary*its absorption term if there are more than one face in the tetrahedron that is on the boundary
         # print(idx)
@@ -711,47 +722,37 @@ def boundary_triang(velemNodes, nBands, bounNode, nodecoords, node_indices, tria
         # Check if the nodes are in any order in bounNode
         is_boundary = False  # variable to say that at the beginning the face in not on a boundary
         for nodes in node_combinations:  # for each node in each combination
-            for surface_idx, surface in enumerate(bounNode):  # for index and surface in the number of nodes
-                surface_set = sorted(set(surface))  # creates a set of the surface nodes
-                surface_set_idx = surface_idx
-                nodes_set = sorted(set(nodes))  # create a set of the node combination of the tetrahedron into consideration
-                # surface_list = list(surface)
-                if nodes_set == surface_set:  # if these are equal, it means that the tetrahedron into consideration has a surface in the boundary and therefore is_boundary gets the value of True.
-                    # print(surface_set)
-                    # print(surface_list)
-                    is_boundary = True
-                    if is_boundary:  # if the surface is at the boundary, then take the coordinates of each vertix
-                        # Convert the vertices to NumPy arrays for vector operations
-                        bc0 = nodecoords[node_indices[nodes[0]], :]
-                        bc1 = nodecoords[node_indices[nodes[1]], :]
-                        bc2 = nodecoords[node_indices[nodes[2]], :]
+            face_key = frozenset(nodes)
+            surface_idx = MapBoundSurf.get(face_key)
+            if surface_idx is not None:
+                # Convert the vertices to NumPy arrays for vector operations
+                bc0 = nodecoords[node_indices[nodes[0]], :]
+                bc1 = nodecoords[node_indices[nodes[1]], :]
+                bc2 = nodecoords[node_indices[nodes[2]], :]
 
-                        # bc0 = gmsh.model.mesh.getNode(nodes[0])[0] #coordinates of vertix 0
-                        # bc1 = gmsh.model.mesh.getNode(nodes[1])[0] #coordinates of vertix 1
-                        # bc2 = gmsh.model.mesh.getNode(nodes[2])[0] #coordinates of vertix 2
+                v1 = bc1 - bc0
+                v2 = bc2 - bc0
 
-                        face_area = 0.5 * np.linalg.norm(np.cross(bc1 - bc0, bc2 - bc0))  # Compute the area using half of the cross product's magnitude
-                        # print(face_area)
+                face_area = tri_area_from_edges(v1, v2)
+                
+                total_boundArea += face_area
+                
+                if face_area > 0:
+                    # Use the index to access the corresponding absorption area
+                    face_absorption_product = face_area * triangle_face_absorption[surface_idx]  # calculate the product between the area*the correspondent absorption term
+                    # print(face_absorption_product)
 
-                        face_areas[idx] = face_area  # area of the surface that is on boundary per each tetrahedron
-                        total_boundArea += face_area  # add to the total boundary area
+                    tetrahedron_boundary_areas += face_absorption_product  # add the calculation to the tetrahedron correspondent
 
-                        if face_area > 0:
-                            # Use the index to access the corresponding absorption area
-                            face_absorption_product = face_area * triangle_face_absorption[surface_set_idx]  # calculate the product between the area*the correspondent absorption term
-                            # print(face_absorption_product)
-
-                            tetrahedron_boundary_areas += face_absorption_product  # add the calculation to the tetrahedron correspondent
-
-                            total_tetrahedron_boundary_areas[:] = tetrahedron_boundary_areas  # if there are multiple surfaces on the boundary per each tetrahedron, then add also the second and the third one
+                    total_tetrahedron_boundary_areas[:] = tetrahedron_boundary_areas  # if there are multiple surfaces on the boundary per each tetrahedron, then add also the second and the third one
 
         boundary_areas.append(np.array(
             total_tetrahedron_boundary_areas))  # Append the total boundary_areas for the tetrahedron to the list
     # print(total_tetrahedron_boundary_areas)
     boundary_areas = np.array(boundary_areas)
     boundary_areas = boundary_areas.T
-    return boundary_areas, total_boundArea
 
+    return boundary_areas, total_boundArea
 
 #%%
 ###############################################################################
@@ -1406,14 +1407,7 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
             Time array after the source is switched off
     """
 
-    result_container = {}
-    if json_file is not None:
-        with open(json_file, "r") as f:
-            result_container = json.load(f)
-
-    called_from_choras = False
-    if "results" in result_container:
-        called_from_choras = True
+    rho_c0_2 = rho*c0**2
 
     w_new_band = []
     w_rec_band = []
@@ -1421,7 +1415,13 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
     w_rec_off_deriv_band = []
     p_rec_off_deriv_band = []
 
-    prev_percent_done = 0
+    cur_percent_done = 0
+
+
+    if json_file is not None:
+        with open(json_file, "r") as file:
+            percentage_json = json.load(file)
+
 
     for iBand in range(nBands):
         
@@ -1433,18 +1433,25 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
         
         w_rec = np.zeros(recording_steps) #energy density at the receiver
         
+        beta_zero_freq_MUL_DIV = (1-beta_zero_freq[iBand]) / (1+beta_zero_freq[iBand])
+        dt_c0_m_atm_2 = 2*dt*c0*m_atm / (1+beta_zero_freq[iBand])
+        dt_Dx_cell_volume = 2*dt*Dx/cell_volume/(1+beta_zero_freq[iBand])
+        dt_beta = 2*dt / (1+beta_zero_freq[iBand])
+
         #Computing w;
         for steps in range(0, recording_steps):
             #Compute w at inner mesh points
             #time_steps = steps*dt #total time for the calculation
             
             #Computing w_new (w at n+1 time step)
+
+            wTEMP = interior_tet@w
+
+            w_new = w_old * beta_zero_freq_MUL_DIV - \
+                (dt_c0_m_atm_2*w) + \
+                dt_Dx_cell_volume * (wTEMP) + \
+                dt_beta*s #The absorption term is part of beta_zero
                         
-            w_new = np.divide((np.multiply(w_old,(1-beta_zero_freq[iBand]))),(1+beta_zero_freq[iBand])) - \
-                np.divide((2*dt*c0*m_atm*w),(1+beta_zero_freq[iBand])) + \
-                    np.divide(np.divide((2*dt*Dx*(interior_tet@w)),cell_volume),(1+beta_zero_freq[iBand])) + \
-                        np.divide((2*dt*s),(1+beta_zero_freq[iBand])) #The absorption term is part of beta_zero
-                         
             #Update w before next step
             w_old = w #The w at n step becomes the w at n-1 step
             w = w_new #The w at n+1 step becomes the w at n step
@@ -1466,52 +1473,29 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
                 for tet_s in cl_tet_s_keys:
                      s[tet_s] = source1[0] *total_weights_s[tet_s]
             
-            idx_w_rec = np.argmin(np.abs(t - sourceon_time)) #index at which the t array is equal to the sourceon_time; I want the RT to calculate from when the source stops.
-            w_rec_off = w_rec[idx_w_rec:]
-            p_rec_off = (w_rec[idx_w_rec:])*rho*c0**2
-            t_off = t[idx_w_rec:]
+            idx_w_rec = np.searchsorted(t, sourceon_time)
+            if idx_w_rec > 0 and (t[idx_w_rec] - sourceon_time) > (sourceon_time - t[idx_w_rec - 1]):
+                idx_w_rec -= 1
+
+            if steps == recording_steps-1 :
+                w_rec_off = w_rec[idx_w_rec:]
+                p_rec_off = w_rec_off * rho_c0_2
+                t_off = t[idx_w_rec:]
+
+                w_rec_off_deriv = w_rec_off[1:]
+                w_rec_off_deriv = np.pad(w_rec_off_deriv, (0, 1), 'constant')
+
+                #Envelope of Impulse response from the pressure
+                p_rec_off_transf = p_rec_off[1:]
+                p_rec_off_transf = np.pad(p_rec_off_transf, (0, 1), 'constant')
+                p_rec_off_deriv = ((p_rec_off - p_rec_off_transf))/dt
+                #print(time_steps)
             
-            #Envelope of Impulse response from the energy density
-            w_rec_off_deriv = w_rec_off #initialising an array of derivative equal to the w_rec_off -> this will be the impulse response after modifying it
-            w_rec_off_deriv = np.delete(w_rec_off_deriv, 0) #delete the first element of the array -> this means shifting the array one step before and therefore do a derivation
-            w_rec_off_deriv = np.append(w_rec_off_deriv,0) #add a zero in the last element of the array -> for derivation and to have the same length as previously
-            #impulse = ((w_rec_off - w_rec_off_deriv))/dt#/(rho*c0**2) #This is the difference between the the energy density and the impulse response 
-            
-            #Envelope of Impulse response from the pressure
-            p_rec_off_transf = p_rec_off #initialising an array of derivative equal to the w_rec_off -> this will be the impulse response after modifying it
-            p_rec_off_transf = np.delete(p_rec_off_transf, 0) #delete the first element of the array -> this means shifting the array one step before and therefore do a derivation
-            p_rec_off_transf = np.append(p_rec_off_transf,0) #add a zero in the last element of the array -> for derivation and to have the same length as previously
-            p_rec_off_deriv = ((p_rec_off - p_rec_off_transf))/dt
-            #print(time_steps)
-            percentDone = round(
-                100 * (iBand / nBands + steps / recording_steps * 1 / nBands)
-            )
-            if percentDone > prev_percent_done:
-
-                print(str(percentDone) + "% of main calculation completed")
-                if called_from_choras:
-                    
-                    # Checking whether the user has cancelled the simulation (only one time per percentage increase)
-                    if check_should_cancel(json_file):
-                        print("breaking out of inner loop")
-                        break
-
-                    result_container["results"][0]["percentage"] = percentDone
-                    with open(json_file, "w") as percentage_update:
-                        percentage_update.write(
-                            json.dumps(result_container, indent=4)
-                        )
-
-            prev_percent_done = percentDone
-
-        if check_should_cancel(json_file):
-            print("breaking out of outer loop")
-            break
-
-        # percentDone = round(100*iBand/nBands);
-        #if (percentDone > curPercent):
-        # print(str(percentDone) + "% of main calculation completed")
-            #curPercent += 1;
+        percent_done = round(100*iBand/nBands)
+        if (percent_done > cur_percent_done):
+            print(str(percent_done) + "% of main calculation completed")
+            percentage_json["results"][0]["percentage"] = percent_done
+            cur_percent_done += 1
     
         w_new_band.append(w_new)
         w_rec_band.append(w_rec)
