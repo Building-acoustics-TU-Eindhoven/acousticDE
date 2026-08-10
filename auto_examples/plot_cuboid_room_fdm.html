@@ -1,0 +1,364 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Finite Difference Method &mdash; Diffusion Equation for Acoustics 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=fd6457a4" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Creating an Auralization" href="plot_cuboid_room_auralization.html" />
+    <link rel="prev" title="The Finite Volume Method" href="plot_cuboid_room_fvm.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Diffusion Equation for Acoustics
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Software Presentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Overview.html">Overview</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Software Use:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Finite%20Difference%20Method%20Use.html">Finite Difference Method Use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finite%20Volume%20Method%20Use.html">Finite Volume Method Use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Auralization%20Use.html">Auralization Use</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Software Theory:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../DocumentationFDM.html">Diffusion Equation Finite Difference Method (FDM) documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DocumentationFVM.html">Diffusion Equation Finite Volume Method (FVM) Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DocumentationAuralization.html">Auralization Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../acousticDE/FDMfunctions.html">FDM functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acousticDE/FVMfunctions.html">FVM functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acousticDE/ReverberationFunctions.html">Reverberation functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acousticDE/Auralizationfunctions.html">Auralization functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="plot_cuboid_room_fvm.html">The Finite Volume Method</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">The Finite Difference Method</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#general-input-variables">General input variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creation-of-json">Creation of json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run-simulation">Run simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plotting-energy-decay-curve">Plotting Energy decay curve</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="plot_cuboid_room_auralization.html">Creating an Auralization</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Diffusion Equation for Acoustics</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">The Finite Difference Method</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/auto_examples/plot_cuboid_room_fdm.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-plot-cuboid-room-fdm-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="the-finite-difference-method">
+<span id="sphx-glr-auto-examples-plot-cuboid-room-fdm-py"></span><h1>The Finite Difference Method<a class="headerlink" href="#the-finite-difference-method" title="Link to this heading"></a></h1>
+<p>Simulate the energy decay in a cuboid room using the Finite difference diffusion
+equation.</p>
+<p>As per text below, the inputs need to be prepared. For that, follow the instructions in
+<a class="reference external" href="https://building-acoustics-tu-eindhoven.github.io/acousticDE/Finite%20Difference%20Method%20Use.html#inputs">Finite Different Method Use Documentation — Inputs</a>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">acousticDE.FiniteDifferenceMethod.FDM</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_fdm_sim</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+</pre></div>
+</div>
+<p>Use a temporary directory for the example</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">temp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span>
+<span class="c1"># You can replace the temporary directory with a specific path if desired</span>
+<span class="n">script_dir</span> <span class="o">=</span> <span class="n">temp_dir</span><span class="o">.</span><span class="n">name</span>
+</pre></div>
+</div>
+<section id="general-input-variables">
+<h2>General input variables<a class="headerlink" href="#general-input-variables" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">input_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;room_dim&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span>
+    <span class="s2">&quot;coord_source&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span> <span class="c1">#source coordinates x,y,z</span>
+    <span class="s2">&quot;coord_rec&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span> <span class="c1">#rec coordinates x,y,z</span>
+    <span class="s2">&quot;alpha_1&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.10</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.30</span><span class="p">],</span> <span class="c1">#Absorption coefficient for Surface1 - Floor</span>
+    <span class="s2">&quot;alpha_2&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.07</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">,</span> <span class="mf">0.13</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.16</span><span class="p">],</span> <span class="c1">#Absorption coefficient for Surface2 - Ceiling</span>
+    <span class="s2">&quot;alpha_3&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.09</span><span class="p">,</span> <span class="mf">0.11</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.14</span><span class="p">,</span> <span class="mf">0.14</span><span class="p">],</span> <span class="c1">#Absorption coefficient for Surface3 - Wall Front</span>
+    <span class="s2">&quot;alpha_4&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.09</span><span class="p">,</span> <span class="mf">0.11</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.14</span><span class="p">,</span> <span class="mf">0.14</span><span class="p">],</span> <span class="c1">#Absorption coefficient for Surface4 - Wall Back</span>
+    <span class="s2">&quot;alpha_5&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.09</span><span class="p">,</span> <span class="mf">0.11</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.14</span><span class="p">,</span> <span class="mf">0.14</span><span class="p">],</span> <span class="c1">#Absorption coefficient for Surface5 - Wall Left</span>
+    <span class="s2">&quot;alpha_6&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.09</span><span class="p">,</span> <span class="mf">0.11</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.14</span><span class="p">,</span> <span class="mf">0.14</span><span class="p">],</span> <span class="c1">#Absorption coefficient for Surface6 - Wall Right</span>
+    <span class="s2">&quot;fc_low&quot;</span><span class="p">:</span> <span class="mi">125</span><span class="p">,</span> <span class="c1">#lowest frequency</span>
+    <span class="s2">&quot;fc_high&quot;</span><span class="p">:</span> <span class="mi">4000</span><span class="p">,</span> <span class="c1">#highest frequency</span>
+    <span class="s2">&quot;num_octave&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># 1 or 3 depending on how many octave you want</span>
+    <span class="s2">&quot;dx&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="s2">&quot;dt&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="mi">8000</span><span class="p">,</span> <span class="c1">#time discretization</span>
+    <span class="s2">&quot;m_atm&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="c1">#air absorption coefficient [1/m]</span>
+    <span class="s2">&quot;th&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="c1">#int(input(&quot;Enter type Absortion conditions (option 1,2,3):&quot;)) # options Sabine (th=1), Eyring (th=2) and modified by Xiang (th=3)</span>
+    <span class="s2">&quot;tcalc&quot;</span><span class="p">:</span> <span class="s2">&quot;decay&quot;</span> <span class="c1">#Choose &quot;decay&quot; if the objective is to calculate the energy decay of the room with all its energetic parameters; Choose &quot;stationarysource&quot; if the aim is to understand the behaviour of a room subject to a stationary source</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="creation-of-json">
+<h2>Creation of json<a class="headerlink" href="#creation-of-json" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">fname_input_configuration</span> <span class="o">=</span> <span class="s2">&quot;cube_input_fdm.json&quot;</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">script_dir</span><span class="p">,</span> <span class="n">fname_input_configuration</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Input file successfully created: cube_input_fdm.json&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Input file successfully created: cube_input_fdm.json
+</pre></div>
+</div>
+</section>
+<section id="run-simulation">
+<h2>Run simulation<a class="headerlink" href="#run-simulation" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">run_fdm_sim</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">script_dir</span><span class="p">,</span> <span class="n">fname_input_configuration</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reverberation time T30 band values:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;t30_band&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Early decay time EDT band values:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;edt_band&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Clarity C80 band values:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;c80_band&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Definition D50 band values:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;d50_band&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Centre time Ts band values:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;ts_band&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;_io.TextIOWrapper&#39;&gt;
+1% done
+2% done
+3% done
+4% done
+5% done
+6% done
+7% done
+8% done
+9% done
+10% done
+11% done
+12% done
+13% done
+14% done
+15% done
+16% done
+17% done
+18% done
+19% done
+20% done
+21% done
+22% done
+23% done
+24% done
+25% done
+26% done
+27% done
+28% done
+29% done
+30% done
+31% done
+32% done
+33% done
+34% done
+35% done
+36% done
+37% done
+38% done
+39% done
+40% done
+41% done
+42% done
+43% done
+44% done
+45% done
+46% done
+47% done
+48% done
+49% done
+50% done
+51% done
+52% done
+53% done
+54% done
+55% done
+56% done
+57% done
+58% done
+59% done
+60% done
+61% done
+62% done
+63% done
+64% done
+65% done
+66% done
+67% done
+68% done
+69% done
+70% done
+71% done
+72% done
+73% done
+74% done
+75% done
+76% done
+77% done
+78% done
+79% done
+80% done
+81% done
+82% done
+83% done
+84% done
+85% done
+86% done
+87% done
+88% done
+89% done
+90% done
+91% done
+92% done
+93% done
+94% done
+95% done
+96% done
+97% done
+98% done
+99% done
+100% done
+Post-processing calculations...
+Simulation finished successfully! Results in resultsFDM.pkl file
+Reverberation time T30 band values: [0.96239727 0.76779903 0.60284259 0.45902749 0.47890634 0.44870691]
+Early decay time EDT band values: [0.96071194 0.76567151 0.60011633 0.45479659 0.47545658 0.44438318]
+Clarity C80 band values: [ 3.32608732  5.0712991   7.1997136  10.04015696  9.56089758 10.30365141]
+Definition D50 band values: [51.20265533 59.31685493 68.1926099  77.78489939 76.35324653 78.54053339]
+Centre time Ts band values: [69.73893271 55.63761091 43.68424592 33.26286157 34.70335812 32.51499329]
+</pre></div>
+</div>
+</section>
+<section id="plotting-energy-decay-curve">
+<h2>Plotting Energy decay curve<a class="headerlink" href="#plotting-energy-decay-curve" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">times</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">][:</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">])</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">energy_decay_curve</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;w_rec_off_band&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">times</span><span class="p">,</span>
+    <span class="mi">10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">energy_decay_curve</span><span class="o">.</span><span class="n">T</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">energy_decay_curve</span><span class="p">))),</span>
+    <span class="n">label</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">fc</span><span class="p">)</span><span class="si">}</span><span class="s1"> Hz&#39;</span> <span class="k">for</span> <span class="n">fc</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;center_freq&#39;</span><span class="p">]])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="o">-</span><span class="mi">65</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Energy Decay Curve (dB)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_cuboid_room_fdm_001.png" srcset="../_images/sphx_glr_plot_cuboid_room_fdm_001.png" alt="plot cuboid room fdm" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend object at 0x7f52b183f460&gt;
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">temp_dir</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 16.424 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-cuboid-room-fdm-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/93664addb0a56862cc6fe2224f457528/plot_cuboid_room_fdm.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_cuboid_room_fdm.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/efda2fdf518eae32c112c9d75015d970/plot_cuboid_room_fdm.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_cuboid_room_fdm.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/b8b1c0bf74f738b8c91e934084a9082b/plot_cuboid_room_fdm.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_cuboid_room_fdm.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="plot_cuboid_room_fvm.html" class="btn btn-neutral float-left" title="The Finite Volume Method" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="plot_cuboid_room_auralization.html" class="btn btn-neutral float-right" title="Creating an Auralization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Ilaria Fichera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

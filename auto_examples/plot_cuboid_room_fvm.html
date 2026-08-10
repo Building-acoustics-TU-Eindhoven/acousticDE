@@ -1,0 +1,348 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Finite Volume Method &mdash; Diffusion Equation for Acoustics 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=fd6457a4" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The Finite Difference Method" href="plot_cuboid_room_fdm.html" />
+    <link rel="prev" title="Auralization functions" href="../acousticDE/Auralizationfunctions.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Diffusion Equation for Acoustics
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Software Presentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Overview.html">Overview</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Software Use:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Finite%20Difference%20Method%20Use.html">Finite Difference Method Use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finite%20Volume%20Method%20Use.html">Finite Volume Method Use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Auralization%20Use.html">Auralization Use</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Software Theory:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../DocumentationFDM.html">Diffusion Equation Finite Difference Method (FDM) documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DocumentationFVM.html">Diffusion Equation Finite Volume Method (FVM) Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DocumentationAuralization.html">Auralization Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../acousticDE/FDMfunctions.html">FDM functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acousticDE/FVMfunctions.html">FVM functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acousticDE/ReverberationFunctions.html">Reverberation functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acousticDE/Auralizationfunctions.html">Auralization functions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Example Gallery:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">The Finite Volume Method</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#general-input-variables">General input variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creation-of-json">Creation of json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creation-of-csv-for-absorption">Creation of csv for absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run-simulation">Run simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plotting-energy-decay-curve">Plotting Energy decay curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plotting-reverberataion-time-t30">Plotting Reverberataion time T30</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="plot_cuboid_room_fdm.html">The Finite Difference Method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plot_cuboid_room_auralization.html">Creating an Auralization</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Diffusion Equation for Acoustics</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">The Finite Volume Method</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/auto_examples/plot_cuboid_room_fvm.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-plot-cuboid-room-fvm-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="the-finite-volume-method">
+<span id="sphx-glr-auto-examples-plot-cuboid-room-fvm-py"></span><h1>The Finite Volume Method<a class="headerlink" href="#the-finite-volume-method" title="Link to this heading"></a></h1>
+<p>Simulate the energy decay in a cuboid room using the Finite Volume diffusion
+equation.</p>
+<p>After installing the package and reading the documentation in
+<a class="reference external" href="https://building-acoustics-tu-eindhoven.github.io/acousticDE/Finite%20Volume%20Method%20Use.html">Finite Volume Method Use Documentation</a>,
+the software can be tested with the following files:</p>
+<ul class="simple">
+<li><p><em>cube.skp</em></p></li>
+<li><p><em>cube.geo</em></p></li>
+<li><p><em>cube.msh</em></p></li>
+</ul>
+<p>These files can be found in the example folder.</p>
+<p>The file <em>cube.skp</em> is a SketchUp file containing a room with volume
+<span class="math notranslate nohighlight">\(3 \times 3 \times 3 \ \mathrm{m}^3\)</span>.
+The files <em>cube.geo</em> and <em>cube.msh</em> are both important files created and saved
+according to the instructions in
+<a class="reference external" href="https://building-acoustics-tu-eindhoven.github.io/acousticDE/Finite%20Volume%20Method%20Use.html#geometry-mesh">Finite Volume Method Use Documentation — Geometry &amp; Mesh</a>.</p>
+<p>The inputs need to be prepared. For that, follow the instructions in
+<a class="reference external" href="https://building-acoustics-tu-eindhoven.github.io/acousticDE/Finite%20Volume%20Method%20Use.html#general-inputs">Finite Volume Method Use Documentation — General Inputs</a>.
+This will create a CSV file that you must fill with the absorption coefficients.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pooch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">acousticDE.FiniteVolumeMethod.FVMfunctions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">create_vgroups_names</span><span class="p">,</span> <span class="n">number_freq</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">acousticDE.FiniteVolumeMethod.FVM</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_fvm_sim</span>
+
+<span class="n">temp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span>
+<span class="n">script_dir</span> <span class="o">=</span> <span class="n">temp_dir</span><span class="o">.</span><span class="n">name</span>
+</pre></div>
+</div>
+<section id="general-input-variables">
+<h2>General input variables<a class="headerlink" href="#general-input-variables" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">input_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;coord_source&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span> <span class="c1">#source coordinates x,y,z</span>
+    <span class="s2">&quot;coord_rec&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span> <span class="c1">#rec coordinates x,y,z</span>
+    <span class="s2">&quot;fc_low&quot;</span><span class="p">:</span> <span class="mi">125</span><span class="p">,</span> <span class="c1">#lowest frequency</span>
+    <span class="s2">&quot;fc_high&quot;</span><span class="p">:</span> <span class="mi">2000</span><span class="p">,</span> <span class="c1">#highest frequency</span>
+    <span class="s2">&quot;num_octave&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># 1 or 3 depending on how many octave you want</span>
+    <span class="s2">&quot;dt&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="mi">20000</span><span class="p">,</span> <span class="c1">#time discretization</span>
+    <span class="s2">&quot;m_atm&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="c1">#air absorption coefficient [1/m]</span>
+    <span class="s2">&quot;th&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="c1">#int(input(&quot;Enter type Absortion conditions (option 1,2,3):&quot;)) # options Sabine (th=1), Eyring (th=2) and modified by Xiang (th=3)</span>
+    <span class="s2">&quot;tcalc&quot;</span><span class="p">:</span> <span class="s2">&quot;decay&quot;</span> <span class="c1">#Choose &quot;decay&quot; if the objective is to calculate the energy decay of the room with all its energetic parameters; Choose &quot;stationarysource&quot; if the aim is to understand the behaviour of a room subject to a stationary source</span>
+<span class="p">}</span>
+
+<span class="c1"># Download the mesh file from GitHub</span>
+<span class="n">file_path</span> <span class="o">=</span> <span class="n">pooch</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span>
+    <span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://github.com/Building-acoustics-TU-Eindhoven/acousticDE/raw/refs/heads/master/examples/cube.msh&quot;</span><span class="p">,</span>
+    <span class="n">known_hash</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">path</span><span class="o">=</span><span class="n">script_dir</span><span class="p">,</span>
+    <span class="n">fname</span><span class="o">=</span><span class="s2">&quot;cube.msh&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="creation-of-json">
+<h2>Creation of json<a class="headerlink" href="#creation-of-json" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">fname_input_configuration</span> <span class="o">=</span> <span class="s2">&quot;cube_input_fvm.json&quot;</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">script_dir</span><span class="p">,</span> <span class="n">fname_input_configuration</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Input file successfully created: cube_input_fvm.json&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Input file successfully created: cube_input_fvm.json
+</pre></div>
+</div>
+</section>
+<section id="creation-of-csv-for-absorption">
+<h2>Creation of csv for absorption<a class="headerlink" href="#creation-of-csv-for-absorption" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get the names of the mesh&#39;s boundaries</span>
+<span class="n">vGroupsNames</span> <span class="o">=</span> <span class="n">create_vgroups_names</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+<span class="c1"># Get the number of frequency bands and their center frequencies for the</span>
+<span class="c1"># specified frequency range and number of octaves</span>
+<span class="n">nBands</span><span class="p">,</span> <span class="n">center_freq</span> <span class="o">=</span> <span class="n">number_freq</span><span class="p">(</span>
+    <span class="n">input_data</span><span class="p">[</span><span class="s2">&quot;num_octave&quot;</span><span class="p">],</span>
+    <span class="n">input_data</span><span class="p">[</span><span class="s2">&quot;fc_high&quot;</span><span class="p">],</span> <span class="n">input_data</span><span class="p">[</span><span class="s2">&quot;fc_low&quot;</span><span class="p">])</span>
+
+<span class="c1"># Create DataFrame containing the absorption coefficients</span>
+<span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Material&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">fc</span><span class="p">)</span><span class="si">}</span><span class="s2">Hz&quot;</span> <span class="k">for</span> <span class="n">fc</span> <span class="ow">in</span> <span class="n">center_freq</span><span class="p">]</span>
+<span class="n">csv_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">script_dir</span><span class="p">,</span> <span class="s2">&quot;absorption_coefficients.csv&quot;</span><span class="p">)</span>
+<span class="n">surface_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">group</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">vGroupsNames</span> <span class="k">if</span> <span class="n">group</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">]</span>
+
+<span class="c1"># Set all absorption coefficients to be equal on all boundaries.</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.33</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.53</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">])</span>
+
+<span class="n">absorption_coefficients</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">column_names</span><span class="p">)</span>
+<span class="n">absorption_coefficients</span><span class="p">[</span><span class="s2">&quot;Material&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">surface_names</span>
+<span class="n">absorption_coefficients</span><span class="p">[</span><span class="n">absorption_coefficients</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">absorption_coefficients</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">nBands</span><span class="p">))</span>
+
+<span class="n">absorption_coefficients</span><span class="p">[</span><span class="n">absorption_coefficients</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span> <span class="o">=</span> <span class="n">data</span>
+
+<span class="n">absorption_coefficients</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">csv_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="run-simulation">
+<h2>Run simulation<a class="headerlink" href="#run-simulation" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">run_fvm_sim</span><span class="p">(</span>
+    <span class="n">file_path</span><span class="p">,</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">script_dir</span><span class="p">,</span> <span class="n">fname_input_configuration</span><span class="p">),</span>
+    <span class="n">csv_path</span><span class="p">)</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reverberation time T30 band values:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;t30_band&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Early decay time EDT band values:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;edt_band&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Clarity C80 band values:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;c80_band&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Definition D50 band values:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;d50_band&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Centre time Ts band values:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;ts_band&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Completed initial geometry calculation. Starting internal tetrahedrons calculations...
+Completed internal tetrahedrons calculation. Starting boundary tetrahedrons calculations...
+Completed boundary tetrahedrons calculation. Starting main diffusion equation calculations over time and frequency...
+0% of main calculation completed
+20% of main calculation completed
+40% of main calculation completed
+60% of main calculation completed
+80% of main calculation completed
+100% of main calculation completed
+Simulation finished successfully! Results in resultsFVM.pkl file
+Reverberation time T30 band values: [0.23983422 0.21537999 0.13200185 0.12280077 0.08542459]
+Early decay time EDT band values: [0.22346011 0.19798942 0.11191539 0.10267346 0.06650958]
+Clarity C80 band values: [19.95931515 22.24865492 36.34694697 39.07168659 56.17510402]
+Definition D50 band values: [94.38457727 95.95099404 99.46630776 99.63948715 99.9692925 ]
+Centre time Ts band values: [22.59307887 20.75763686 14.34802766 13.61486832 10.5233194 ]
+</pre></div>
+</div>
+</section>
+<section id="plotting-energy-decay-curve">
+<h2>Plotting Energy decay curve<a class="headerlink" href="#plotting-energy-decay-curve" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">times</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">][:</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">])</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">energy_decay_curve</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;w_rec_off_band&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">()</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">times</span><span class="p">,</span>
+    <span class="mi">10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">energy_decay_curve</span><span class="o">.</span><span class="n">T</span><span class="o">/</span><span class="n">energy_decay_curve</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span>
+    <span class="n">label</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">band</span><span class="p">)</span><span class="si">}</span><span class="s1"> Hz&#39;</span> <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">center_freq</span><span class="p">])</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">65</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;SPL decay (dB)&quot;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time (s)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_cuboid_room_fvm_001.png" srcset="../_images/sphx_glr_plot_cuboid_room_fvm_001.png" alt="plot cuboid room fvm" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Text(0.5, 23.52222222222222, &#39;Time (s)&#39;)
+</pre></div>
+</div>
+</section>
+<section id="plotting-reverberataion-time-t30">
+<h2>Plotting Reverberataion time T30<a class="headerlink" href="#plotting-reverberataion-time-t30" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">t30</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;t30_band&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">()</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">center_freq</span><span class="p">,</span>
+    <span class="n">t30</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">band</span><span class="p">)</span><span class="si">}</span><span class="s1"> Hz&#39;</span> <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">center_freq</span><span class="p">])</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Reverberation time T30 (s)&quot;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Frequency (Hz)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_cuboid_room_fvm_002.png" srcset="../_images/sphx_glr_plot_cuboid_room_fvm_002.png" alt="plot cuboid room fvm" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Text(0.5, 23.52222222222222, &#39;Frequency (Hz)&#39;)
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">temp_dir</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.592 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-cuboid-room-fvm-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/48655917be89978851bf803729a4b2db/plot_cuboid_room_fvm.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_cuboid_room_fvm.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/4d795de9fe3c602310c48326e71f43bc/plot_cuboid_room_fvm.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_cuboid_room_fvm.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/cde7422a2d1717535c1c4eac9b7ee65e/plot_cuboid_room_fvm.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_cuboid_room_fvm.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../acousticDE/Auralizationfunctions.html" class="btn btn-neutral float-left" title="Auralization functions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="plot_cuboid_room_fdm.html" class="btn btn-neutral float-right" title="The Finite Difference Method" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Ilaria Fichera.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
