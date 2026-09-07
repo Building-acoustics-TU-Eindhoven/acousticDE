@@ -58,7 +58,7 @@ The surface materials are defined within the inputs variable section of the pyth
 
 ### Frequency range
 The frequency range for this method is defined within the _PrepareInputsFVM.py_ python script. 
-The frequency resolution should be included as inputs variables *fc_low* and *fc_high*; these should be the center frequency of a band. The maximum number of frequencies is set in octave bands and can be choosen by the user. Normally, *fc_low* is set to 125 Hz and *fc_high* is set to 2000 Hz. The octave setting must be defined: set to 1 for one-octave bands or 3 for third-octave bands
+The frequency resolution should be included as inputs variables *fc_low* and *fc_high*; these should be the center frequency of a band. The maximum number of frequencies is set in octave bands and can be chosen by the user. Normally, *fc_low* is set to 125 Hz and *fc_high* is set to 2000 Hz. The octave setting must be defined: set to 1 for one-octave bands or 3 for third-octave bands
 
 ### Spatial discretization $\Delta x$
 The Finite Different method works with a spatial discretization. The space is defined by a mesh grid of points at a distance $\Delta v$ between each other. The distance $\Delta v$ is equal for each dimension $x,y,z$, therefore $\Delta v = \Delta x = \Delta y = \Delta z$, and it is defined in meters. 
@@ -120,7 +120,7 @@ The Clarity ($C_{80}$) parameter is the early to late arriving sound energy rati
 C_{80} = 10 \log_{10} \left( \frac{\int_0^{80\,\mathrm{ms}} p^2(t) \, dt}{\int_{80\,\mathrm{ms}}^\infty p^2 (t) \, dt} \right ) \,  [dB]
 ```
 
-The Definition ($D_{50}$) parameter is the ratio of the early received sound energy (0-50ms after direct sound arrival) to the total received energy. It referres only to the speech and it is defined as: 
+The Definition ($D_{50}$) parameter is the ratio of the early received sound energy (0-50ms after direct sound arrival) to the total received energy. It refers only to the speech and it is defined as: 
 
 ```{math}
 D_{50} = 10 \log \left( \frac{\int_0^{50\,\mathrm{ms}} p^2(t) \, dt}{\int_0^\infty p^2 (t) \, dt} \right ) \,  [\%]
