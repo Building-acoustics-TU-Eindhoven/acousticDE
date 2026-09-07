@@ -86,7 +86,7 @@ Figure 1. SPL decay (left) and reverberation time T30 (right) for a 3 x 3 x 3 [m
 ## Design trade-offs
 The design of `acousticDE` is based on architectural choices shaped by the needs of room acoustics simulation research, which are transparency, reproducibility and modularity. The software is implemented in Python, since it is open-source and widely accessible compared to licensed alternatives, i.e. Matlab. In addition, it is an easier and more understandable language for researchers and for users from different fields compared to lower level languages such as C++ and Fortran.
 
-**Method-centric modularity:** Rather than implementing a single abstract solver interface, `acousticDE` is organised around self contained modules: FDM, FVM and Auralization. 
+**Method-centric modularity:** Rather than implementing a single abstract solver interface, `acousticDE` is organised around self cointained modules: FDM, FVM and Auralization. 
 
 Each module exposes a clear functional API like 'run_fvm_sim(...)' and maintains its own workflow. This structure mirrors typical room-acoustics workflows and prioritises clarity over complex abstraction layers. While the software is developed as a stand-alone project, its architecture allows for potential future integration or coupling with other tools (such as the image source method for the early part of the decay), providing that a common input generation framework is used.
 
@@ -106,7 +106,7 @@ This pipeline was intentionally chosen to make each stage of the modelling proce
 
 ## Software validation
 
-Results of the software have been validated against published studies, measurements results, and external methods such as the acoustics radiosity method [@Koutsouris2013CombinationMethod] and the sound particle tracing method [@ISimpa2012] and via informal auralization experiments. Integration testing of the main simulation engine (point 4 of the pipeline before mentioned) are in place to verify that the complete system functions seamlessly and that each of its submodules interacts correctly between each other. State verification against expected results are also implemented in the automatic tests. To complement the validation of the numerical results, the software is also profiled to ensure its robust performance under continuous changes.
+Results of the software have been validated against published studies, measurements results, and external methods such as the acoustics radiosity method [@Koutsouris2013CombinationMethod] and the sound particle tracing method [@ISimpa2012] and via informal auralization experiments. Integration testing of the main simulation engine (point 4 of the pipeline before mentioned) are in place to verify that the complete system functions seamlessy and that each of its submodules interacts correctly between each other. State verification against expected results are also implemented in the automatic tests. To complement the validation of the numerical results, the software is also profiled to ensure its robust performance under continuous changes.
 
 
 # Research impact assessment
