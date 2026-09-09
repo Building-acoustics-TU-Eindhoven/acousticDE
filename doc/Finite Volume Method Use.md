@@ -133,7 +133,7 @@ The model allows for the insertion of only one acoustics receiver position per c
 
 #### Frequency range
 The frequency range for this method is defined within the _PrepareInputsFVM.py_ python script. 
-The frequency resolution should be included as inputs variables *fc_low* and *fc_high*; these should be the center frequency of a band. The maximum number of frequencies is set in octave bands and can be chosen by the user. Normally, *fc_low* is set to 125 Hz and *fc_high* is set to 2000 Hz. The octave setting must be defined: set to 1 for one-octave bands or 3 for third-octave bands.
+The frequency resolution should be included as inputs variables *fc_low* and *fc_high*; these should be the center frequency of a band. The maximum number of frequencies is set in octave bands and can be chosen by the user. Normally, *fc_low* is set to 125 Hz and *fc_high* is set to 2000 Hz. The octave setting must be defined: set to 1 for one-octave bands or 3 for third-octave bands. It is important to note that the diffusion equation is a high frequency modelling method (above the Schroeder freqeuncy of the room).
 
 #### Time discretization dt
 The time discretization for this method is defined within the _FVM.py_ python script. 

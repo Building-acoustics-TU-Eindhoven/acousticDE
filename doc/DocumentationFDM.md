@@ -23,7 +23,7 @@ The main partial differential equation is associated with mixed boundary conditi
 -D \frac{\partial w(\mathbf{r}, t)} {\partial n} = A_{r}(\mathbf{r},\alpha ) c w(\mathbf{r}, t) \text{ on } \partial V
 ```
 This models the effect of the absorption at the surfaces in the sound field.
-The term $n$ indicates the vector normal to the surface and the term $A_{r}$ is dependent on the absorption coefficient $\alpha$. Depending on the scope and on the absorption coefficient to use, the absorption term $A_{r}$ is defined differently. There are three different absorption factors $A_{r}$: the Sabine (Picaut at al., 1999; Valeau at al., 2006), the Eyring (Jing et al., 2007; Billon et al., 2008) and the modified by Xiang (Jing et al., 2008).
+The term $n$ indicates the vector normal to the surface and the term $A_{r}$ is dependent on the absorption coefficient $\alpha$. Depending on the scope and on the absorption coefficient to use, the absorption term $A_{r}$ is defined differently. There are three different absorption factors $A_{r}$: the Sabine (Picaut at al., 1999; Valeau at al., 2006), the Eyring (Jing et al., 2007; Billon et al., 2008) and the modified by Xiang (Jing et al., 2008). The diffusion equation model is a high-frequency method that assumes sufficient modal overlap, which corresponds to frequencies above the Schroeder frequency.
 
 ## Finite Different Scheme
 
