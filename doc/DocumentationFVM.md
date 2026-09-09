@@ -14,7 +14,7 @@ The model for the sound energy density $w(\mathbf{r}, t)$ at position $\mathbf{r
 + c m w(\mathbf{r}, t) = P(t)\delta(\mathbf{r} - \mathbf{r}_s)
 ```
 
-where $\frac{\partial^2}{\partial x^2}$, $\frac{\partial^2}{\partial y^2}$, $\frac{\partial^2}{\partial z^2}$ are the Laplace operators and $D = \frac{\lambda c}{3}$ is the so-called theoretical diffusion coefficient with $c$ being the speed of sound. The diffusion coefficient is a constant value that takes into account the room geometry and volume trough the mean free path defined for proportionate rooms as $\lambda = \frac{4 V}{S}$ with volume $V$ of the room and $S$ the total surface area. The term $P(t)$ indicates a sound source term at position $r_s$. The term $c m w(\mathbf{r}, t)$ accounts for the atmospheric attenuation within the room, where $m$ is the absorption coefficient of air (Billon et al., 2008).
+where $\frac{\partial^2}{\partial x^2}$, $\frac{\partial^2}{\partial y^2}$, $\frac{\partial^2}{\partial z^2}$ are the Laplace operators and $D = \frac{\lambda c}{3}$ is the so-called theoretical diffusion coefficient with $c$ being the speed of sound. The diffusion coefficient is a constant value that takes into account the room geometry and volume through the mean free path defined for proportionate rooms as $\lambda = \frac{4 V}{S}$ with volume $V$ of the room and $S$ the total surface area. The term $P(t)$ indicates a sound source term at position $r_s$. The term $c m w(\mathbf{r}, t)$ accounts for the atmospheric attenuation within the room, where $m$ is the absorption coefficient of air (Billon et al., 2008).
 
 The main partial differential equation is associated with mixed boundary conditions on a domain $\partial V$, as follows:
 
