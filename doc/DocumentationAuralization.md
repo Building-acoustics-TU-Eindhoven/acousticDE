@@ -1,6 +1,6 @@
 ﻿# Auralization Documentation
 
-An auralization is an audible file that is created by the convolution of an anaechoic audio signal with a simulated room impulse response. It shows how a specific sound (the sound produced by the anechoic file) would sound in the room specifically simulated (room impulse response). The diffusion equation method is the method used to produce the energy densities inside the room, which needs to be converted into a time-domain impulse reponse usable for auralization.
+An auralization is an audible file that is created by the convolution of an anaechoic audio signal with a simulated room impulse response. It shows how a specific sound (the sound produced by the anechoic file) would sound in the room specifically simulated (room impulse response). The diffusion equation method is the method used to produce the energy densities inside the room, which needs to be converted into a time-domain impulse response usable for auralization.
 
 In order to create an auralization, the first step is to get the results from the diffusion equation method. 
 In particular, the diffusion equation simulator provides the energy density at the receiver position. To make it audible, acoustic pressure is needed which is related to the energy density by the formula $p_\mathrm{rec}^2 = w_{rec} \rho c_0^2$, where $w_\mathrm{rec}$ is the energy density at the receiver, $\rho$ is the air density in kg/m³ and $c_0$ is the speed of sound.   
@@ -15,7 +15,7 @@ Next, random noise needs to be created, to represent the random phase fluctuatio
 
 Since each octave band is modeled separately in the diffusion equation model, a Butterwoth bandpass filter ensures that the random noise occupies the correct frequency range. This step include the creation of the filter for the random noise. A order 8 for the bandpass filter ensures that the transition band is sharp enough to isolate the frequency regions while keeping stability.
 
-The filtered random noise is created by convolving the time domain of the Butterworth bandpass filter and the random noise for each frequency band. This gives the noise in each frequency the correct spectral charateristic. 
+The filtered random noise is created by convolving the time domain of the Butterworth bandpass filter and the random noise for each frequency band. This gives the noise in each frequency the correct spectral characteristic. 
 
 The square-root of the envelope of the impulse response (calculated at step 2) is to be padded to get the same length of the filtered random noise (calculated at step 5). Padding ensures temporal alignment without distorting the envelope and allows for element-wise multiplication.
 
