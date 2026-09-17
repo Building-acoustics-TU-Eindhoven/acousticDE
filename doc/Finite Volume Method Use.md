@@ -100,6 +100,26 @@ length_of_mesh = 1
 
 This script creates the volumetric mesh using Gmsh software. The method is suitable for any type of geometry.
 
+#### Gmsh workflow
+
+A workflow directly through Gmsh GUI is also possible, however very difficult for complex geometries.
+In order to create a volumetric mesh of the room with Gmsh GUI, the following steps need to be followed for a box shape:
+1. Open Gmsh GUI, click 'File', 'New'. It will let you create a file, give it a name, e.g. 'room_model.geo'. Put the .geo entension in the name of the file;
+2. It will ask you which geometry kernel you would like to use. Select 'Built-in';
+3. On the vertical left panel, go to '+ Geometry', '+ Elementary entities', '+ Add' and select 'Box'. It will open a window to create the box. Consider X,Y,Z as the origin of the box, while DX, DY, DZ as its dimensions. For example (X,Y,Z)=(0,0,0) and (DX,DY,DZ)=(5,5,5). Click 'Add' and close the window.
+4. Press 'q' to exit the command. The box is created. You can move it around to check if it has the correct dimensions;
+5. Go to 'Tools', 'Options', 'Geometry', 'Visibility' and check the Surfaces and the Volumes. Close then the window;
+6. On the vertical left panel, go to '+ Geometry', '+ Physical groups', '+ Add' and select 'Volume'. It will open a window called 'Physical Volume Context', put the name 'RoomVolume' and select the volume in the graphics window (you might need to select the baricentral yellow dot inside the volume). Close the 'Physical Volume Context' window and this option is automatically saved;
+7. Go to 'Tools', 'Options', 'Geometry', 'Aspect' and in the 'Surface display' choose 'Solid'. You should see now the surfaces in grey. Close then the window;
+8. On the vertical left panel, go to '+ Geometry', '+ Physical groups', '+ Add' and select 'Surface'. It will open a window called 'Physical Surface Context', put the name 'Walls' and select all the surfaces that are the walls and that have the same material properties. Close the 'Physical Surface Context' window and this option is automatically saved. ;
+9. Press 'e' to end selection and exit the command.
+10. Repeat step 8 and 9 until all the surfaces have an assigned physical group. This could be "Ceiling", "Floor", "Doors" etc...;
+11. Go to 'Tools', 'Options', 'Mesh', 'General' and choose the element size factor. As a default this is 1. You could make it bigger with 2 (fewer tetrahedra) or smaller with 0.5 (more tetrahedra). Close then the window;
+12. On the vertical left panel, go to '+ Mesh' and select '3D'. The mesh is created. Check that the mesh is correctly created with triangles at the boundaries and tetrahedra in the volume, otherwise the solver will not work.
+13. Click 'File', 'Export' and save the file as 'room_volume.msh'. Click 'Save', use the format Version 4 ASCII and check 'Save all elements'.
+
+Other descriptions on how create a geometry directly using Gmsh GUI is on the [Gmsh reference manual - Section 2.16](https://gmsh.info/dev/doc/texinfo/gmsh.html#t16_003a-Constructive-Solid-Geometry_002c-OpenCASCADE-geometry-kernel) and [Gmsh reference manual - Section 3](https://gmsh.info/dev/doc/texinfo/gmsh.html#Gmsh-graphical-user-interface-1). It is important that once the 3D geometry is created on Gmsh, the msh file needs to be created with tetrahedral elements. 
+
 ### General inputs
 The general inputs needs to be set by using the script <a href="https://raw.githubusercontent.com/Building-acoustics-TU-Eindhoven/acousticDE/refs/heads/master/acousticDE/FiniteVolumeMethod/PrepareInputsFVM.py" download>Download PrepareInputsFVM.py</a>
 <!-- 
