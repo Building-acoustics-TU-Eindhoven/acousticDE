@@ -155,8 +155,7 @@ plt.figure()
 ax2 = plt.axes()
 ax2.plot(
     center_freq, 
-    t30,
-    label=[f'{int(band)} Hz' for band in center_freq])
+    t30)
 ax2.set_ylim(0, 0.5)
 ax2.grid(True)
 ax2.set_ylabel("Reverberation time T30 (s)")
