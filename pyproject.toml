@@ -44,7 +44,15 @@ docs = [
     "ipykernel",
 ]
 
-dev = ["acousticDE[docs]"]
+examples = [
+    "pooch",
+    "matplotlib",
+    "ipython",
+    "ipykernel",
+]
+
+
+dev = ["acousticDE[docs,examples]"]
 
 [project.urls]
 Tracker = "https://github.com/Building-acoustics-TU-Eindhoven/acousticDE/issues"

@@ -48,6 +48,33 @@ results = run_auralization_sim('C:\....\anechoic_file.wav','C:\....\resultsFVM.p
 
 To run the codes/functions, check the [documentation](https://building-acoustics-tu-eindhoven.github.io/acousticDE/) depending on the method you want to use, create the files needed for the specific function and check the Tutorial sections of the documentation.
 
+
+### Running the examples
+
+The example scripts are included in the GitHub repository. If you have cloned the repository and would like to run the examples, install the main package with 'pip install acousticDE==0.1.0' as described above and install the additional packages required by the examples with:
+
+```bash
+pip install matplotlib pooch ipython
+```
+
+Then, from the root directory of the repository, run an example with:
+
+```bash
+python examples/plot_cuboid_room_fvm.py
+```
+
+Alternatively, if you use `uv`, the project dependencies can be installed with:
+
+```bash
+uv sync --extra examples
+```
+
+and the example can then be run with:
+
+```bash
+uv run python examples/plot_cuboid_room_fvm.py
+```
+
 ## Usage & Documentation
 The [documentation](https://building-acoustics-tu-eindhoven.github.io/acousticDE/) is created to help to use and develop acousticDE effectively. To use acousticDE, please refer to the Tutorial section of the [documentation](https://building-acoustics-tu-eindhoven.github.io/acousticDE/). In addition, the documentation gives an introduction of the package for both FDM and FVM.
 
