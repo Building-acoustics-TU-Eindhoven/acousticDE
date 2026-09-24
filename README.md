@@ -25,21 +25,21 @@ python
 import acousticDE
 ```
 
-To run FVM, continue with:
+To run FVM, prepare the inputs file as per description in [FVM documentation Inputs](https://building-acoustics-tu-eindhoven.github.io/acousticDE/Finite%20Volume%20Method%20Use.html#inputs) and continue with:
 ```bash 
 from acousticDE.FiniteVolumeMethod.FVM import run_fvm_sim
 
 results = run_fvm_sim('C:\....\mesh.msh','C:\....\mesh_input_fvm.json','C:\....\absorption_coefficients.csv')
 ```
 
-To run FDM, continue with:
+To run FDM, prepare the inputs file as per description in [FDM documentation Inputs](https://building-acoustics-tu-eindhoven.github.io/acousticDE/Finite%20Difference%20Method%20Use.html#inputs) and continue with:
 ```bash 
 from acousticDE.FiniteDifferenceMethod.FDM import run_fdm_sim
 
 results = run_fdm_sim('C:\....\mesh_input_fdm.json')
 ```
 
-To run Auralization, continue with:
+To run Auralization, prepare the inputs file as per description in [Auralization documentation Inputs](https://building-acoustics-tu-eindhoven.github.io/acousticDE/Auralization%20Use.html#inputs) and continue with:
 ```bash 
 from acousticDE.Auralization.Auralization import run_auralization_sim
 
