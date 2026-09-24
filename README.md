@@ -23,27 +23,38 @@ Once installed, in cmd window, use the following commands:
 python
 
 import acousticDE
+
+from pathlib import Path
 ```
 
 To run FVM, prepare the inputs file as per description in [FVM documentation Inputs](https://building-acoustics-tu-eindhoven.github.io/acousticDE/Finite%20Volume%20Method%20Use.html#inputs) and continue with:
 ```bash 
 from acousticDE.FiniteVolumeMethod.FVM import run_fvm_sim
 
-results = run_fvm_sim('C:\....\mesh.msh','C:\....\mesh_input_fvm.json','C:\....\absorption_coefficients.csv')
+mesh_file = Path.cwd() / "mesh.msh"
+simulation_inputs = Path.cwd() / "simulation_fvm_inputs.json"
+abs_coeff = Path.cwd() / "absorption_coefficients.csv"
+
+results = run_fvm_sim(str(mesh_file), simulation_inputs, abs_coeff)
 ```
 
 To run FDM, prepare the inputs file as per description in [FDM documentation Inputs](https://building-acoustics-tu-eindhoven.github.io/acousticDE/Finite%20Difference%20Method%20Use.html#inputs) and continue with:
 ```bash 
 from acousticDE.FiniteDifferenceMethod.FDM import run_fdm_sim
 
-results = run_fdm_sim('C:\....\mesh_input_fdm.json')
+simulation_inputs = Path.cwd() / "simulation_fdm_inputs.json"
+
+results = run_fdm_sim(simulation_inputs)
 ```
 
 To run Auralization, prepare the inputs file as per description in [Auralization documentation Inputs](https://building-acoustics-tu-eindhoven.github.io/acousticDE/Auralization%20Use.html#inputs) and continue with:
 ```bash 
-from acousticDE.Auralization.Auralization import run_auralization_sim
+from acousticDE.Auralization.Auralization import run_auralization
 
-results = run_auralization_sim('C:\....\anechoic_file.wav','C:\....\resultsFVM.pkl')
+anechoic_file = Path.cwd() / "anechoic_file.wav"
+results_FVM = Path.cwd() / "resultsFVM.pkl"
+
+results = run_auralization(anechoic_file, results_FVM)
 ```
 
 To run the codes/functions, check the [documentation](https://building-acoustics-tu-eindhoven.github.io/acousticDE/) depending on the method you want to use, create the files needed for the specific function and check the Tutorial sections of the documentation.
