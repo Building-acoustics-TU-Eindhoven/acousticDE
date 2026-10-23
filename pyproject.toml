@@ -8,7 +8,8 @@ requires-python = ">=3.10"
 authors = [
     {name = "Ilaria Fichera", email = "i.fichera@tue.nl"},
     {name = "Cedric Van hoorickx", email = "c.m.l.van.hoorickx@tue.nl"},
-    {name = "Maarten Hoornikx", email = "m.c.j.hornikx@tue.nl"},
+    {name = "Marco Berzborn", email = "m.berzborn@tue.nl"},
+    {name = "Maarten Hornikx", email = "m.c.j.hornikx@tue.nl"},
 ]
 keywords = [
     "room acoustics", 

@@ -1,4 +1,4 @@
-cff-version: 0.1.0
+cff-version: 1.2.0
 message: "If you use this software, please cite it using these metadata."
 authors:
   - family-names: Fichera
@@ -7,6 +7,9 @@ authors:
   - family-names: Van hoorickx
     given-names: Cédric
     orcid: "https://orcid.org/0000-0002-9671-5558"
+  - family-names: Berzborn
+    given-names: Marco
+    orcid: "https://orcid.org/0000-0002-4421-1702"
   - family-names: Hornikx
     given-names: Maarten
     orcid: "https://orcid.org/0000-0002-8343-6613"
