@@ -11,6 +11,9 @@ The package acousticDE is formed by three subfolders:
 + _FiniteVolumeMethod_ computes the room acoustics based on the diffusion equation using the finite volume method (Munoz, 2019);
 
 ## Installation
+
+### Installation from users
+
 Use pip to install acousticDE
 
 ```bash 
@@ -59,6 +62,61 @@ results = run_auralization(anechoic_file, results_FVM)
 
 To run the codes/functions, check the [documentation](https://building-acoustics-tu-eindhoven.github.io/acousticDE/) depending on the method you want to use, create the files needed for the specific function and check the Tutorial sections of the documentation.
 
+### Installation from source (developers)
+These instructions are intended for users who clone the repository and want to run the examples or develop acousticDE locally.
+You will need Git, Python 3.10 to 3.14 and [uv](https://docs.astral.sh/uv/) for environment and package management.
+
+On Ubuntu or Ubuntu under WSL, install the system libraries required by Gmsh:
+```bash 
+sudo apt update
+sudo apt install libglu1-mesa libgl1 libxrender1 libxcursor1 libxft2 libxinerama1 libgomp1
+```
+These packages were needed to run the example in the tested Ubuntu/WSL environment. Other Linux distributions may require different package names.
+
+Clone the repository and enter its directory
+
+```bash
+git clone https://github.com/Building-acoustics-TU-Eindhoven/acousticDE.git
+cd acousticDE
+```
+
+Create and activate a virtual environment
+
+```bash
+uv venv --python 3.12 .venv
+```
+
+Activate the environment on macOS and Linux with:
+
+```bash
+source .venv/bin/activate
+```
+
+Activate the environment on  Windows PowerShell with:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+Install acousticDE in editable mode, including the example dependencies as below:
+
+```bash
+uv pip install -e ".[examples]"
+```
+
+Editable mode allows changes to the local source code to be used without reinstalling the package after every code change. The `examples` dependency group installs the additional packages needed to run the example scripts. See `pyproject.toml` for the complete list of dependencies.
+
+Verify the installation by checking that the package can be inported:
+
+```bash
+python -c "import acousticDE, numpy; print('ok', numpy.__version__)"
+```
+
+If works, run an example from the repository root:
+
+```bash
+python examples/plot_cuboid_room_fvm.py
+```
 
 ### Running the examples
 

@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Acoustics Simulation using the Diffusion Equation"
 readme = "README.md"
 license = {file = "LICENSE.md" }
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.15"
 authors = [
     {name = "Ilaria Fichera", email = "i.fichera@tue.nl"},
     {name = "Cedric Van hoorickx", email = "c.m.l.van.hoorickx@tue.nl"},
@@ -23,13 +23,16 @@ classifiers = [
     "Natural Language :: English",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "numpy<2.0.0",
+    "numpy",
     "scipy",
     "gmsh",
     "soundfile",
-    "sounddevice",
     "pandas",
     "pytest"
 ]
@@ -52,8 +55,10 @@ examples = [
     "ipykernel",
 ]
 
+audio = ["sounddevice"]
 
-dev = ["acousticDE[docs,examples]"]
+
+dev = ["acousticDE[docs,examples,audio]"]
 
 [project.urls]
 Tracker = "https://github.com/Building-acoustics-TU-Eindhoven/acousticDE/issues"
