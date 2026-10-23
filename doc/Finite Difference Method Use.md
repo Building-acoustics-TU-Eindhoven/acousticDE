@@ -136,6 +136,24 @@ A low value indicates that most of the energy arrives early, a high value reveal
 
 The values for all these parameters are calculated from the Barron's revisited theory formulas (Vorlander, 2008) with the influence of the direct field neglected.
 
+## Validation
+The software has been validated against published studies, measurements results, and external methods such as the acoustics radiosity method (Koutsouris et al., 2013) and the sound particle tracing method (Picaut & Fortin, 2012). Some of the published studies to which the software has been validated to are:
+
+- A. Billon, J. Picaut, C. Foy, V. Valeau, and A. Sakout, “Introducing atmospheric attenuation within a diffusion model for room-acoustic predictions,” The Journal of the Acoustical Society of America, vol. 123, no. 6, pp. 4040–4043, 6 2008.
+- V. Valeau, J. Picaut, and M. Hodgson, “On the use of a diffusion equation for room-acoustic prediction,” The Journal of the Acoustical Society of America, vol. 119, no. 3, pp. 1504–1513, 3 2006.
+- Y. Jing and N. Xiang, “A modified diffusion equation for room-acoustic predication,” The Journal of the Acoustical Society of America, vol. 121, no. 6, pp. 3284–3287, 6 2007
+- Y. Jing and N. Xiang, “On boundary conditions for the diffusion equation in room-acoustic prediction: Theory, simulations, and experiments,” The Journal of the Acoustical Society of America, vol. 123, no. 1, pp. 145–153, 10 2008.
+- A. Billon, J. Picaut, and A. Sakout, “Prediction of the reverberation time in high absorbent room using a modified-diffusion model,” Applied Acoustics, vol. 69, no. 1, pp. 68–74, 1 2008.
+- J. M. Navarro, J. Escolano, and J. J. López, “A preliminary comparative investigation between a diffusion equation model and diffuse reflection algorithms in room-acoustics modeling,” in Final Program and Abstract Book - 4th International Symposium on Communications, Control, and Signal Processing, ISCCSP 2010, 2010
+- A. Billon and A. Sakout, “Prediction of the reverberation time in rooms with non uniform absorptions using a diffusion model,” ICSV13 Vienna, 2006.
+
+An example of validation is shown below for the room 20 x 20 x 2.5 $m^3$, with source position (4 m ,10 m,1 m) and a line of point receivers (x, 9.5 m, 1 m). The walls, ceiling and floor have an absorption coefficient of 0.05, while the wall at y=20 m has an absorption coefficient of 0.5 (Valeau et al., 2006). The discretisation of the FDM mesh and time has been set up at $\Delta t$ of 1/16000 s and $\Delta v$ 0.5 m. For the FVM mesh, the mesh length was specified as 1 m.
+
+![ValidationValeau2006](images/Valeau2006.png)
+
+Figure 1. Total sound pressure level in the flat room 20 x 20 x 2.5 $m^3$, plotted at height 1 m, along the receiver line y=9.5 m, with the FDM diffusion model and the FVM diffusion model and the reference values from literature.
+
+
 ## References
 - J. M. Navarro, J. Escolano, J. J. Lopez, Implementation and evaluation of a diffusion equation model based on finite difference schemes for sound field prediction in rooms, Applied Acoustics 73 (6-7) (2012).
 

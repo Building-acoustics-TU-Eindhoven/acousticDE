@@ -44,7 +44,7 @@ Room acoustics simulation is essential for researchers and for practitioners to 
 
 # State of the field
 
-The diffusion equation model has emerged as an effective compromise for room acoustics simulations in the high frequency range, providing physically meaningful spatial and temporal distributions of acoustic energy while remaining computationally efficient [@Foy2016IncludingApproach; @Mou2023AnSpaces; @SuGul2020ComparativeStations]. However, despite its demonstrated usefulness in the literature, accessible and user-friendly open-source software implementations of the acoustic diffusion equation model do not exist [@Hornikx2024] or are somewhat limited. In fact, most implementations of the diffusion equation are embedded in commercial tools (e.g. COMSOL or Femlab toolbox for Matlab), where room acoustics simulation are not the primary focus. An additional open source implementation exists, but it is currently at its initial experimental stage, lacks documentation and is written in GNU programming language [@univgustaveeiffel]. 
+The diffusion equation model has emerged as an effective compromise for room acoustics simulations in the high frequency range, providing physically meaningful spatial and temporal distributions of acoustic energy while remaining computationally efficient [@Foy2016IncludingApproach; @Mou2023AnSpaces; @SuGul2020ComparativeStations]. However, despite its demonstrated usefulness in the literature, accessible and user-friendly open-source software implementations of the acoustic diffusion equation model do not exist [@Hornikx2024] or are somewhat limited. In fact, most implementations of the diffusion equation are embedded in commercial tools (e.g. COMSOL or Femlab toolbox for Matlab), where room acoustics simulation are not the primary focus. An additional open source implementation exists, but it is currently at its initial experimental stage, lacks documentation and is written in GNU Octave programming language [@univgustaveeiffel]. 
 
 Compared to the available software, `acousticDE` distinguishes itself by providing two different numerical methods for implementing the diffusion equation within a Python programming environment: the Du Fort&Frankel Finite Difference Method (FDM) [@Navarro2012ImplementationRooms] and the Finite Volume Method (FVM) [@PaganMunoz2019NumericalMethods]. The FDM is suitable for parallelepiped shapes and the room is discretised into a 3D grid of points where the energy density is calculated. The FVM supports arbitrary 3D geometry, through a volumetric tetrahedral mesh. The dual approach allows the user to select the appropriate balance between flexibility and efficiency, depending on the room type and the dimension of the discretization. Compared to other tools for the high frequency range, such as pyroomacoustics [@Scheibler2018] and sound particle tracing [@ISimpa2012], the DE model is easy to use and understand and has a low computational time, allowing users to quickly simulate room acoustic problems. However, for non-proportional geometries or highly absorptive spaces, the diffusion equation does not reach the level of accuracy of more detailed (but computationally more costly) acoustics methods (geometrical acoustics or wave-based method). It is instead accurate for compact spaces with high reflective surfaces. 
 
@@ -59,14 +59,14 @@ The diffusion equation method estimates how acoustic energy is distributed over 
 The governing diffusion equation and boundary condition are:
 
 $$
-\frac{\partial{w(\mathbf{r}, t)}} {\partial{t}} = - D \boldsymbol{\nabla}^2 w(\mathbf{r}, t) - m c w(\mathbf{r}, t) + q(\mathbf{r}, t) 
+\frac{\partial{w(\mathbf{r}, t)}} {\partial{t}} = D \boldsymbol{\nabla}^2 w(\mathbf{r}, t) - m c w(\mathbf{r}, t) + q(\mathbf{r}, t) 
 $$
 
 $$
 -D \dfrac{\partial w}{\partial n} = h w
 $$
 
-where $w(\mathbf{r}, t)$ is the energy density at each position $\mathbf{r}$ and at time $t$, $m$ is the atmospheric attenuation coefficient, $c$ is the speed of sound, $q(\mathbf{r}, t)$ is the source term and $h$ is the boundary absorption term. Several methodologies propose expressions for $h$ based on different assumptions on how to treat the surface absorption coefficients of the room [@Picaut2002NumericalProcess; @Jing2007APredication; @Jing2008OnExperiments]. The diffusion coefficient $D$, with units m$^2$/s, indicates how quickly sound diffuses around the room. This depends on the mean free path of the room.
+where $w(\mathbf{r}, t)$ is the energy density at each position $\mathbf{r}$ and at time $t$, $m$ is the atmospheric attenuation coefficient, $c$ is the speed of sound, $q(\mathbf{r}, t)$ is the source term and $h$ is the boundary absorption term. Several methodologies propose expressions for $h$ based on different assumptions on how to treat the surface absorption coefficients of the room: the Sabine absorption term [@Picaut2002NumericalProcess], the Eyring absorption term [@Jing2007APredication], and the modified absorption term [@Jing2008OnExperiments]. The diffusion coefficient $D$, with units m$^2$/s, indicates how quickly sound diffuses around the room. This depends on the mean free path of the room.
 
 From the energy density, the reverberant field Sound Pressure Level (SPL) can be calculated as follows: 
 $$
@@ -79,7 +79,7 @@ This method allows to calculate acoustics parameters in the room (e.g. sound pre
 ![](figures/spldecay.png)
 ![](figures/t30freq.png)
 
-Figure 1. SPL decay (left) and reverberation time T30 (right) for a 3 x 3 x 3 [m$^3$] for absorption coefficients [0.3 ,0.33,0.5,0.53,0.7] at each frequency.
+Figure 1. SPL decay (left) and reverberation time T30 (right) for a 3 x 3 x 3 [m$^3$] with source position (1.5 m, 1.5 m, 1.5 m), receiver position (2.0 m, 1.5 m, 1.5 m) for absorption coefficients [0.3 ,0.33,0.5,0.53,0.7] at each frequency. This example considers the Modified Absorption term [@Jing2008OnExperiments]. 
 
 # Software design
 
@@ -119,7 +119,7 @@ No generative AI tools were used in the development of this software, the writin
 
 # Acknowledgements and Fundings
 
-The authors acknowledges contributions from Silvin Willemsen, Marco Berzborn, Hassan Teymoori, Amin Livani, Felipe Raymann, and Radovan Bast.
+The authors acknowledges contributions from Silvin Willemsen, Hassan Teymoori, Amin Livani, Felipe Raymann, and Radovan Bast.
 
 This research is funded by the Dutch Research Council (NWO), Applied and Engineering Sciences (AES) under grant agreement No. 19430, with project title "A new era of room acoustics simulation software: from academic advances to a sustainable open-source project and community".
 
