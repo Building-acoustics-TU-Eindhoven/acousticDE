@@ -152,10 +152,32 @@ def test_run_fdm_sim():
     elapsed_time = et - st
     
     results = locals()
-    
-    return results
 
-results = test_run_fdm_sim()  
+    data_dir = Path(__file__).parent / "test_data"
+
+    with open(data_dir / "StateVariablesFDM.pkl", "rb") as f:
+        expected_data = pickle.load(f)
+        
+    new_data = results
+
+    variables_to_check = [
+        "c80_band",
+        "d50_band",
+        "edt_band",
+        "spl_new_band",
+        "spl_r_off_band",
+        "t30_band",
+        "ts_band",
+        "w_new_band",
+        "w_rec_off_band",
+    ]
+
+    for var in variables_to_check:
+        compare_values(new_data[var], expected_data[var], path=var)
+        
+        #return results
+
+#results = test_run_fdm_sim()  
 
 
 
@@ -178,27 +200,3 @@ def compare_values(new, expected, rtol=1e-6, atol=1e-8, path="root"):
     else: 
         assert new == expected, f"{path}: {new} != {expected}"
         
-        
-    
-
-data_dir = Path(__file__).parent / "test_data"
-
-with open(data_dir / "StateVariablesFDM.pkl", "rb") as f:
-    expected_data = pickle.load(f)
-    
-new_data = results
-
-variables_to_check = [
-    "c80_band",
-    "d50_band",
-    "edt_band",
-    "spl_new_band",
-    "spl_r_off_band",
-    "t30_band",
-    "ts_band",
-    "w_new_band",
-    "w_rec_off_band",
-]
-
-for var in variables_to_check:
-    compare_values(new_data[var], expected_data[var], path=var)

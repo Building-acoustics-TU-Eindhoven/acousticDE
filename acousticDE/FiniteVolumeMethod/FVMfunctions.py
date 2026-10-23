@@ -854,7 +854,7 @@ def calculation_rec_time(sourceon_time, dt, edt=-1, ir_length=-1):
         recording_steps : int
             Number of time steps
     """
-    if edt == -1 & ir_length == -1:
+    if edt == -1 and ir_length == -1:
         recording_time = sourceon_time * 2
     elif edt != -1:
         recording_time = sourceon_time + (sourceon_time / 60 * edt)
@@ -1492,9 +1492,6 @@ def computing_energy_density(nBands, voluEl, recording_steps, beta_zero_freq, dt
         w_rec_off_band.append(w_rec_off)
         w_rec_off_deriv_band.append(w_rec_off_deriv)
         p_rec_off_deriv_band.append(p_rec_off_deriv)
-        
-        import warnings
-        warnings.filterwarnings("ignore")
     
     return w_new_band, w_rec_band, w_rec_off_band, w_rec_off_deriv_band, p_rec_off_deriv_band, idx_w_rec, t_off
 

@@ -220,9 +220,21 @@ def test_run_auralization_sim():
     # plt.tight_layout(rect=[0, 0, 1, 0.96])
     # plt.show()
     
-    results = locals()
-    
-    return results
- 
-results = test_run_auralization_sim()
+    #results = locals()
 
+    # Impulse response
+    assert imp_tot is not None
+    assert np.ndim(imp_tot) == 1
+    assert len(imp_tot) > 0
+    assert np.isfinite(imp_tot).all()
+    assert np.max(np.abs(imp_tot)) > 0
+
+    # Convolved (auralized) signal
+    assert sh_conv is not None
+    assert len(sh_conv) > 0
+    assert np.isfinite(sh_conv).all()
+    assert np.max(np.abs(sh_conv)) > 0
+    
+    #return results
+ 
+#results = test_run_auralization_sim()

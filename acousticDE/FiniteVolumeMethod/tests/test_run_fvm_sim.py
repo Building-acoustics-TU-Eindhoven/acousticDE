@@ -195,12 +195,33 @@ def test_run_fvm_sim():
     elapsed_time = et - st
     
     results = locals()
+
+    data_dir = Path(__file__).parent / "test_data"
+
+    with open(data_dir / "StateVariablesFVM.pkl", "rb") as f:
+        expected_data = pickle.load(f)
     
-    return results
+    new_data = results
+
+    variables_to_check = [
+        "c80_band",
+        "d50_band",
+        "edt_band",
+        "spl_r_off_band",
+        "t30_band",
+        "ts_band",
+        "w_new_band",
+        "w_rec_off_band",
+    ]
+
+    for var in variables_to_check:
+        compare_values(new_data[var], expected_data[var], path=var)
+    
+    #return results
 
 #Calling function %run_sim%
 #results = run_sim(coord_source, coord_rec,fc_low,fc_high,num_octave, dt,m_atm , c0, Ws, th, pRef, rho, file_name, dim, tag, center_freq,tcalc = "decay")
-results = test_run_fvm_sim()
+#results = test_run_fvm_sim()
 
 
 
@@ -221,27 +242,3 @@ def compare_values(new, expected, rtol=1e-6, atol=1e-8, path="root"):
     
     else: 
         assert new == expected, f"{path}: {new} != {expected}"
-        
-        
-    
-
-data_dir = Path(__file__).parent / "test_data"
-
-with open(data_dir / "StateVariablesFVM.pkl", "rb") as f:
-    expected_data = pickle.load(f)
-    
-new_data = results
-
-variables_to_check = [
-    "c80_band",
-    "d50_band",
-    "edt_band",
-    "spl_r_off_band",
-    "t30_band",
-    "ts_band",
-    "w_new_band",
-    "w_rec_off_band",
-]
-
-for var in variables_to_check:
-    compare_values(new_data[var], expected_data[var], path=var)

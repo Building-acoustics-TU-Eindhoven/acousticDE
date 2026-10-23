@@ -34,6 +34,9 @@ def run_auralization(anechoic_signal_path,results_path):
   
     with open(results_path, "rb") as f:
         results_sim = pickle.load(f)
+
+    # Save all outputs next to the simulation results file
+    output_dir = os.path.dirname(os.path.abspath(results_path))
    
     #Import data needed from the resultsFVM pickle file
     dt_sim = results_sim["dt"]   #Import delta t (time step) from the simulation calc
@@ -196,7 +199,7 @@ def run_auralization(anechoic_signal_path,results_path):
     # #plt.legend(loc='best')
     # plt.show()
     
-    scipy.io.wavfile.write("imp_resp.wav", fs, imp_resp_norm)
+    scipy.io.wavfile.write(os.path.join(output_dir, "imp_resp.wav"), fs, imp_resp_norm)
     #Play the impulse response
     #sd.play(imp_tot, fs)
     
@@ -225,7 +228,7 @@ def run_auralization(anechoic_signal_path,results_path):
     # plt.show()
 
     # Write the normalized data to a WAV file
-    scipy.io.wavfile.write("auralization.wav", fs, sh_conv_normalized)
+    scipy.io.wavfile.write(os.path.join(output_dir, "auralization.wav"), fs, sh_conv_normalized)
     
     results = locals()
     
@@ -234,8 +237,10 @@ def run_auralization(anechoic_signal_path,results_path):
         if hasattr(v, "read"):   # catches file-like objects
             print(f"Removing unpickleable object: {k}")
             del results[k]
+
+    pkl_path = os.path.join(output_dir, 'resultsAuralization.pkl')
     
-    with open('resultsAuralization.pkl', 'wb') as f:
+    with open(pkl_path, 'wb') as f:
         pickle.dump(results, f)
         
     print("Simulation finished successfully! Results in resultsAuralization.pkl file")

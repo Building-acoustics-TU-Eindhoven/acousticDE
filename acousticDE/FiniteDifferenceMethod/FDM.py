@@ -194,7 +194,8 @@ def run_fdm_sim(inputs_path):
                }
     
     #Calling function %save%
-    save_fdm('resultsFDM.pkl',results)
+    output_dir = os.path.dirname(os.path.abspath(inputs_path))
+    save_fdm(os.path.join(output_dir, 'resultsFDM.pkl'), results)
     
     print("Simulation finished successfully! Results in resultsFDM.pkl file")
     

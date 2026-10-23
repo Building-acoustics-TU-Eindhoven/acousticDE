@@ -15,8 +15,7 @@ the software can be tested with the following files:
 
 These files can be found in the example folder.
 
-The file *cube.skp* is a SketchUp file containing a room with volume
-:math:`3 \\times 3 \\times 3 \ \mathrm{m}^3`.  
+The file *cube.skp* is a SketchUp file containing a room with volume 3 x 3 x 3 m^3.
 The files *cube.geo* and *cube.msh* are both important files created and saved
 according to the instructions in
 `Finite Volume Method Use Documentation — Geometry & Mesh <https://building-acoustics-tu-eindhoven.github.io/acousticDE/Finite%20Volume%20Method%20Use.html#geometry-mesh>`_.

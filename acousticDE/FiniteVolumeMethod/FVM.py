@@ -70,6 +70,9 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
     dt = inputs["dt"]
     m_atm = inputs["m_atm"]
     th = inputs["th"]
+
+    if th not in (1,2,3):
+            raise ValueError(f"Invalid th={th}; expected 1, 2, or 3")
     #file_name = inputs["file_name"]
     #center_freq = inputs["center_freq"]
     #nBands = inputs["nBands"]
@@ -222,7 +225,8 @@ def run_fvm_sim(mesh_file_path, inputs_path, abs_coeff_path):
                "ts_band" : ts_band,
                }
     
-    save_fvm('resultsFVM.pkl',results)
+    output_dir = os.path.dirname(os.path.abspath(inputs_path))
+    save_fvm(os.path.join(output_dir, 'resultsFVM.pkl'), results)
         
     print("Simulation finished successfully! Results in resultsFVM.pkl file")
     
