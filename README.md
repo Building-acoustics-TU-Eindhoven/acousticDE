@@ -2,7 +2,7 @@
 acousticDE is an open-source software package developed for the simulation of room acoustics based on the diffusion equation method. The package provides two complementary numerical implementations of this method: the Finite Volume Method (FVM) and the Finite Difference Method (FDM). In addition, it includes a tool for auralization enabling users to listen to acoustic renderings generated from the results of the Finite Volume Method. The main strength of acousticDE is in its ability to predict the distribution of acoustic energy over space and time within a given room. With only a minimal set of input parameters, the software delivers accurate and computationally efficient estimates of both the energy propagation and room acoustics properties. This makes it a valuable tool for researchers and practitioners interested in architectural acoustics. The software is being developed as part of an ongoing research within the Building Acoustics Group at the Department of Built Environment, Eindhoven University of Technology. It is currently under active development and implemented in Python by Ilaria Fichera. 
 
 ## Release version
-Version 0.1.0
+Version 0.1.1
 
 ## Repository structure
 The package acousticDE is formed by three subfolders: 
@@ -17,7 +17,7 @@ The package acousticDE is formed by three subfolders:
 Use pip to install acousticDE
 
 ```bash 
-pip install acousticDE==0.1.0
+pip install acousticDE==0.1.1
 ```
 
 Once installed, in cmd window, use the following commands:
@@ -120,7 +120,7 @@ python examples/plot_cuboid_room_fvm.py
 
 ### Running the examples
 
-The example scripts are included in the GitHub repository. If you have cloned the repository and would like to run the examples, install the main package with 'pip install acousticDE==0.1.0' as described above and install the additional packages required by the examples with:
+The example scripts are included in the GitHub repository. If you have cloned the repository and would like to run the examples, install the main package with 'pip install acousticDE==0.1.1' as described above and install the additional packages required by the examples with:
 
 ```bash
 pip install matplotlib pooch ipython
