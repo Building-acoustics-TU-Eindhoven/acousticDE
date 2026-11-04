@@ -11,7 +11,7 @@ authors:
   - name: Ilaria Fichera
     orcid: 0000-0002-0097-1486
     affiliation: 1
-  - name: 'Cedric Van hoorickx'
+  - name: 'Cédric Van hoorickx'
     orcid: 0000-0002-9671-5558
     affiliation: 1
   - name: 'Marco Berzborn'
